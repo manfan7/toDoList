@@ -25,21 +25,10 @@ export const ToDoListItem = ({ toDoList: { title, filter, id, entityStatus } }: 
     transition,
     opacity: isDragging ? 0.5 : 1,
     height: "100%",
-    zIndex: isDragging ? 1000 : "auto",
   }
 
   return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      onClick={(e: any) => {
-        // Пропускаем клики, если цель - интерактивный элемент
-        if (e.target.closest('button, input, a, [role="button"]')) {
-          e.stopPropagation()
-        }
-      }}
-    >
+    <div ref={setNodeRef} style={style} {...attributes}>
       <Grid
         container
         flexDirection={"column"}
@@ -54,8 +43,8 @@ export const ToDoListItem = ({ toDoList: { title, filter, id, entityStatus } }: 
         }}
       >
         <BackHandIcon
-          color="secondary"
           {...listeners}
+          color="secondary"
           sx={{
             fontSize: 60,
             position: "absolute",

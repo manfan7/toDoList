@@ -26,7 +26,7 @@ export const Tasks = ({ filter, id, entityStatus }: Tasks) => {
   return (
     <>
       {tasksForToDoList?.length === 0 ? (
-        <p>Тасок нет</p>
+        <>Тасок нет</>
       ) : (
         <List
           sx={{

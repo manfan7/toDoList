@@ -81,7 +81,7 @@ export const Todolists = () => {
     },
     [dispatch, optimisticTodolists],
   )
-
+  console.log("render todo")
   return (
     <DndContext
       collisionDetection={closestCenter}
@@ -143,7 +143,7 @@ export const Todolists = () => {
               borderRadius: "16px",
               transform: "rotate(3deg)",
               boxShadow: 16,
-              transition: "opacity 0.2s ease, transform 0.2s ease",
+              transition: "opacity 0.5s ease, transform 0.2s ease backgroundColor 0.4s ease",
             }}
           >
             <ToDoListItem toDoList={optimisticTodolists.find((t) => t.id === activeId)!} />
