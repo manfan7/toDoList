@@ -21,6 +21,10 @@ export const getTheme = (themeMode: ThemeMode) => {
               color: "white",
               backgroundColor: "transparent", // Цвет лейбла
             },
+            input: {
+              fontSize: "16px",
+              color: "white",
+            },
           },
         },
       },
