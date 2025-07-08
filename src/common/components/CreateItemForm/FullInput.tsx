@@ -37,6 +37,16 @@ export const FullInput = ({ addTask, addTaskTitle, disabled = false }: FullInput
   return (
     <Grid container flex={1} spacing={2} alignItems={"start"}>
       <TextField
+        sx={{
+          "& .MuiInputBase-input": {
+            // Стили для input элемента
+            fontSize: "16px", // Размер шрифта
+            fontFamily: "Arial", // Шрифт
+            fontWeight: 600, // Жирность
+            fontStyle: "italic", // Курсив
+            color: "#ffffff", // Цвет текста
+          },
+        }}
         value={inputValue}
         disabled={disabled}
         onChange={changeHandler}
