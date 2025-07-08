@@ -1,0 +1,20 @@
+.app {
+height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+padding-bottom: 30px;
+  position: relative;
+
+  }
+.app:after{
+  content: '';
+  z-index: -1;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-image: url("../src/app/assets/0726f3bb29d91d039fd3340d65ed6093.jpg");
+  background-position: center;
+  filter: brightness(0.4) blur(8px) ;
+  opacity: .9;
+}

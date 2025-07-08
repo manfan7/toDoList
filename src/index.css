@@ -8,9 +8,9 @@
 
 body {
   margin: 0;
-
   min-width: 320px;
-  min-height: 100vh;
+  height: 100vh;
+  background-image: url("../src/app/assets/0726f3bb29d91d039fd3340d65ed6093.jpg");
 }
 li {
   list-style: none;
@@ -19,5 +19,3 @@ h1 {
   font-size: 3.2em;
   line-height: 1.1;
 }
-
-
