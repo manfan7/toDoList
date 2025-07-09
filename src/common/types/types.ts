@@ -44,6 +44,12 @@ export const createTodolistResponseSchema = baseResponseSchema(
     item: todolistSchema,
   }),
 )
+export const authResponseShema = baseResponseSchema(
+  z.object({
+    userId: z.int(),
+    token: z.string(),
+  }),
+)
 export const defaultResponseSchema = baseResponseSchema(z.object({}))
 export type DefaultResponse = z.infer<typeof defaultResponseSchema>
 export const responseTaskSchema = <T extends z.ZodTypeAny>(schema: T) =>
@@ -56,3 +62,4 @@ export type toDoList = z.infer<typeof todolistSchema>
 export type DomainToDo = toDoList & { filter: FilterValue; entityStatus: RequestStatus }
 export type tasksListType = Record<string, DomainTask[]>
 export type RequestStatus = "idle" | "loading" | "succeeded" | "failed"
+export type AuthResponseType = Omit<z.infer<typeof authResponseShema>, "fieldsErrors">

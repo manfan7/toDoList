@@ -8,10 +8,12 @@ import { Controller, type SubmitHandler, useForm } from "react-hook-form"
 import styles from "./Login.module.css"
 import { type LoginInputs, loginSchema } from "@/features/auth/lib/shemas"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useAppDispatch } from "@/common/hooks/useAppDispatch.ts"
+import { loginTC } from "@/features/auth/model/auth-slice.ts"
 export const Login = () => {
   //const themeMode = useAppSelector(selectThemeMode)
-
   //const theme = getTheme(themeMode)
+  const dispatch = useAppDispatch()
   const {
     register,
     handleSubmit,
@@ -23,7 +25,8 @@ export const Login = () => {
 
     resolver: zodResolver(loginSchema),
   })
-  const onSubmit: SubmitHandler<LoginInputs> = () => {
+  const onSubmit: SubmitHandler<LoginInputs> = (data) => {
+    dispatch(loginTC(data))
     reset()
   }
 

@@ -64,7 +64,7 @@ export const Todolists = () => {
 
       const newOrder = arrayMove(optimisticTodolists, oldIndex, newIndex)
       setOptimisticTodolists(newOrder)
-
+      setActiveId(null)
       try {
         // Фоновая синхронизация с сервером
         await dispatch(
