@@ -49,12 +49,12 @@ export const authResponseShema = baseResponseSchema(
     userId: z.int(),
     token: z.string(),
   }),
-)
+).omit({ fieldsErrors: true })
 export const defaultResponseSchema = baseResponseSchema(z.object({}))
 export type DefaultResponse = z.infer<typeof defaultResponseSchema>
-export const responseTaskSchema = <T extends z.ZodTypeAny>(schema: T) =>
-  baseResponseSchema(schema).omit({ fieldsErrors: true })
-export type ResponseTask = z.infer<typeof responseTaskSchema>
+
+export const responseShema = defaultResponseSchema.omit({ fieldsErrors: true })
+
 export type BaseResponseZod = z.infer<typeof createTodolistResponseSchema>
 export type TaskOperationResponse = z.infer<typeof taskOperationResponseSchema>
 export type GetTasksResponse = z.infer<typeof getTasksSchema>
@@ -63,3 +63,4 @@ export type DomainToDo = toDoList & { filter: FilterValue; entityStatus: Request
 export type tasksListType = Record<string, DomainTask[]>
 export type RequestStatus = "idle" | "loading" | "succeeded" | "failed"
 export type AuthResponseType = Omit<z.infer<typeof authResponseShema>, "fieldsErrors">
+export type ResponseWithoutfieldserror = z.infer<typeof responseShema>

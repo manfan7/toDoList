@@ -9,11 +9,16 @@ import styles from "./Login.module.css"
 import { type LoginInputs, loginSchema } from "@/features/auth/lib/shemas"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useAppDispatch } from "@/common/hooks/useAppDispatch.ts"
-import { loginTC } from "@/features/auth/model/auth-slice.ts"
+import { loginTC, selectIsLoggedIn } from "@/features/auth/model/auth-slice.ts"
+import { useAppSelector } from "@/common/hooks/useAppSelector.ts"
+import { Navigate } from "react-router"
+import { Path } from "@/common/routing/Routing.tsx"
 export const Login = () => {
   //const themeMode = useAppSelector(selectThemeMode)
   //const theme = getTheme(themeMode)
   const dispatch = useAppDispatch()
+  const logined = useAppSelector(selectIsLoggedIn)
+
   const {
     register,
     handleSubmit,
@@ -28,6 +33,9 @@ export const Login = () => {
   const onSubmit: SubmitHandler<LoginInputs> = (data) => {
     dispatch(loginTC(data))
     reset()
+  }
+  if (logined) {
+    return <Navigate to={Path.Main} />
   }
 
   return (

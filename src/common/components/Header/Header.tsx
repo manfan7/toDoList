@@ -16,15 +16,19 @@ import { LinearProgress } from "@mui/material"
 import { selectLoadingState } from "@/app/app-selectrors.ts"
 import { Link } from "react-router"
 import { Path } from "@/common/routing/Routing.tsx"
+import { logoutTc, selectIsLoggedIn } from "@/features/auth/model/auth-slice.ts"
 
 export const Header = () => {
   const themeMode = useAppSelector(selectThemeMode)
   const loading = useAppSelector(selectLoadingState)
+  const logined = useAppSelector(selectIsLoggedIn)
   const dispatch = useAppDispatch()
   const changeMode = () => {
     dispatch(changeThemeModeAC({ themeMode: themeMode === "light" ? "dark" : "light" }))
   }
-
+  const logoutHandler = () => {
+    dispatch(logoutTc())
+  }
   return (
     <AppBar
       position="static"
@@ -39,7 +43,6 @@ export const Header = () => {
             <IconButton color="inherit">
               <MenuIcon />
             </IconButton>
-
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
               <Link
                 style={{
@@ -52,9 +55,12 @@ export const Header = () => {
                 Igor Grytsuk{" "}
               </Link>
             </Typography>
-
-            <NavButton>Sign in</NavButton>
-            <NavButton>Sign up</NavButton>
+            {!logined && (
+              <NavButton component={Link} to={Path.Login}>
+                Sign in
+              </NavButton>
+            )}
+            {logined && <NavButton onClick={logoutHandler}>Log out</NavButton>}
             <NavButton background={"#7a6bd1"}>FAQ</NavButton>
             <FormControlLabel
               control={<Switch color={"default"} onChange={changeMode} defaultChecked />}
