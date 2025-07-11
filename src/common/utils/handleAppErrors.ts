@@ -1,9 +1,9 @@
 import { changeLoading, errorHandler } from "@/app/app-slice.ts"
 
 import type { Dispatch } from "@reduxjs/toolkit"
-import type { BaseResponseZod, TaskOperationResponse } from "@/common/types"
+import type { authRresponse, BaseResponseZod, TaskOperationResponse } from "@/common/types"
 
-export const handleAppError = (dispatch: Dispatch, data: BaseResponseZod | TaskOperationResponse) => {
+export const handleAppError = (dispatch: Dispatch, data: BaseResponseZod | TaskOperationResponse | authRresponse) => {
   if (data?.messages?.length) {
     dispatch(errorHandler({ error: data.messages[0] }))
   } else {

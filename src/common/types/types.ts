@@ -50,11 +50,17 @@ export const authResponseShema = baseResponseSchema(
     token: z.string(),
   }),
 ).omit({ fieldsErrors: true })
+export const authShema = baseResponseSchema(
+  z.object({
+    id: z.number().optional(),
+    email: z.string().optional(),
+    login: z.string().optional(),
+  }),
+)
 export const defaultResponseSchema = baseResponseSchema(z.object({}))
-export type DefaultResponse = z.infer<typeof defaultResponseSchema>
 
 export const responseShema = defaultResponseSchema.omit({ fieldsErrors: true })
-
+export type DefaultResponse = z.infer<typeof defaultResponseSchema>
 export type BaseResponseZod = z.infer<typeof createTodolistResponseSchema>
 export type TaskOperationResponse = z.infer<typeof taskOperationResponseSchema>
 export type GetTasksResponse = z.infer<typeof getTasksSchema>
@@ -64,3 +70,4 @@ export type tasksListType = Record<string, DomainTask[]>
 export type RequestStatus = "idle" | "loading" | "succeeded" | "failed"
 export type AuthResponseType = Omit<z.infer<typeof authResponseShema>, "fieldsErrors">
 export type ResponseWithoutfieldserror = z.infer<typeof responseShema>
+export type authRresponse = z.infer<typeof authShema>

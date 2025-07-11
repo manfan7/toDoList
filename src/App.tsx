@@ -1,6 +1,5 @@
-import { v1 } from "uuid"
 import { ThemeProvider } from "@mui/material/styles"
-import { CssBaseline } from "@mui/material"
+import { CircularProgress, CssBaseline } from "@mui/material"
 import { useAppSelector } from "@/common/hooks/useAppSelector.ts"
 import { selectThemeMode } from "@/app/app-selectrors.ts"
 import { getTheme } from "@/common/theme/theme.ts"
@@ -8,26 +7,29 @@ import { Header } from "@/common/components/Header/Header.tsx"
 import styles from "./App.module.css"
 import { ErrorSnackBar } from "@/common/components/ErrorSnackBar/ErrorSnackBar.tsx"
 import { Routing } from "@/common/routing/Routing.tsx"
+import { useAppDispatch } from "@/common/hooks/useAppDispatch.ts"
+import { useEffect, useState } from "react"
+import { authMe } from "@/features/auth/model/auth-slice.ts"
 
 export type FilterValue = "ALL" | "Active" | "Completed"
-export const tdId1 = v1()
-export const tdId2 = v1()
-
-export type toDotype = {
-  id: string
-  title: string
-  filter: FilterValue
-}
-
-export let toDo: toDotype[] = [
-  { id: tdId1, title: "What to learn", filter: "ALL" },
-  { id: tdId2, title: "What to buy", filter: "ALL" },
-]
 
 export const App = () => {
   const themeMode = useAppSelector(selectThemeMode)
+  const [isinit, setIsinit] = useState(false)
   const theme = getTheme(themeMode)
-
+  const dispatch = useAppDispatch()
+  useEffect(() => {
+    dispatch(authMe()).then(() => {
+      setIsinit(true)
+    })
+  }, [])
+  if (!isinit) {
+    return (
+      <div className={styles.circularProgressContainer}>
+        <CircularProgress size={150} thickness={3} />
+      </div>
+    )
+  }
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />

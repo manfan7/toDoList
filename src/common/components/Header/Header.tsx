@@ -14,7 +14,7 @@ import { useAppDispatch } from "@/common/hooks/useAppDispatch.ts"
 import { changeThemeModeAC, selectThemeMode } from "@/app/app-slice.ts"
 import { LinearProgress } from "@mui/material"
 import { selectLoadingState } from "@/app/app-selectrors.ts"
-import { Link } from "react-router"
+import { Link, useNavigate } from "react-router"
 import { Path } from "@/common/routing/Routing.tsx"
 import { logoutTc, selectIsLoggedIn } from "@/features/auth/model/auth-slice.ts"
 
@@ -22,12 +22,15 @@ export const Header = () => {
   const themeMode = useAppSelector(selectThemeMode)
   const loading = useAppSelector(selectLoadingState)
   const logined = useAppSelector(selectIsLoggedIn)
+  const navigate = useNavigate()
   const dispatch = useAppDispatch()
   const changeMode = () => {
     dispatch(changeThemeModeAC({ themeMode: themeMode === "light" ? "dark" : "light" }))
   }
+
   const logoutHandler = () => {
     dispatch(logoutTc())
+    navigate(Path.Login)
   }
   return (
     <AppBar
@@ -61,7 +64,9 @@ export const Header = () => {
               </NavButton>
             )}
             {logined && <NavButton onClick={logoutHandler}>Log out</NavButton>}
-            <NavButton background={"#7a6bd1"}>FAQ</NavButton>
+            <NavButton component={Link} to={Path.Faq} background={"#7a6bd1"}>
+              FAQ
+            </NavButton>
             <FormControlLabel
               control={<Switch color={"default"} onChange={changeMode} defaultChecked />}
               label="Change theme"
