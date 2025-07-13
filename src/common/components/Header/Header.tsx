@@ -17,6 +17,7 @@ import { selectLoadingState } from "@/app/app-selectrors.ts"
 import { Link, useNavigate } from "react-router"
 import { Path } from "@/common/routing/Routing.tsx"
 import { logoutTc, selectIsLoggedIn } from "@/features/auth/model/auth-slice.ts"
+import { clearData } from "@/features/todolists/model/toDoList-reducer.ts"
 
 export const Header = () => {
   const themeMode = useAppSelector(selectThemeMode)
@@ -30,6 +31,7 @@ export const Header = () => {
 
   const logoutHandler = () => {
     dispatch(logoutTc())
+    dispatch(clearData())
     navigate(Path.Login)
   }
   return (

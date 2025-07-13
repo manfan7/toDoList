@@ -12,12 +12,12 @@ import { ResultCode } from "@/common/enum/enum.ts"
 import { handleServerError } from "@/common/utils/handleServerErrors.ts"
 import { handleAppError } from "@/common/utils/handleAppErrors.ts"
 import { todolistSchema } from "@/common/types/lib/zodtypes/todolistapitypes.ts"
-
+const initialState = {
+  todo: [] as DomainToDo[],
+}
 export const toDoListSlice = createAppSlice({
   name: "todoLists",
-  initialState: {
-    todo: [] as DomainToDo[],
-  },
+  initialState,
   reducers: (create) => {
     return {
       changeFilterAC: create.reducer<{ filter: FilterValue; id: string }>((state, action) => {
@@ -27,6 +27,9 @@ export const toDoListSlice = createAppSlice({
       changeEntityStatus: create.reducer<{ status: RequestStatus; id: string }>((state, action) => {
         const index = state.todo.findIndex((i) => i.id === action.payload.id)
         if (index !== -1) state.todo[index].entityStatus = action.payload.status
+      }),
+      clearData: create.reducer((_state, _action) => {
+        return initialState
       }),
       reorderToDo: create.asyncThunk(
         async (
@@ -163,5 +166,6 @@ export const {
   removeToDoListTC,
   changeEntityStatus,
   reorderToDo,
+  clearData,
 } = toDoListSlice.actions
 export const { selectToDoList } = toDoListSlice.selectors

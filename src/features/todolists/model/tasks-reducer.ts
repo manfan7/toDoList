@@ -1,4 +1,4 @@
-import { addtoDoListTC, removeToDoListTC } from "./toDoList-reducer.ts"
+import { addtoDoListTC, clearData, removeToDoListTC } from "./toDoList-reducer.ts"
 import { createAppSlice } from "@/common/utils"
 import { tasksApi } from "@/features/todolists/api/tasksApi.ts"
 import {
@@ -12,10 +12,10 @@ import { ResultCode } from "@/common/enum/enum.ts"
 import { changeLoading } from "@/app/app-slice.ts"
 import { handleServerError } from "@/common/utils/handleServerErrors.ts"
 import { handleAppError } from "@/common/utils/handleAppErrors.ts"
-
+const initialState = {} as tasksListType
 export const tasksSlice = createAppSlice({
   name: "tasks",
-  initialState: {} as tasksListType,
+  initialState,
   reducers: (create) => ({
     fetchTask: create.asyncThunk(
       async (arg: { todolistId: string }, { dispatch, rejectWithValue }) => {
@@ -128,6 +128,9 @@ export const tasksSlice = createAppSlice({
     })
     builder.addCase(removeToDoListTC.fulfilled, (state, action) => {
       delete state[action.payload.arg.id]
+    })
+    builder.addCase(clearData, (_state, _action) => {
+      return initialState
     })
   },
   selectors: {
