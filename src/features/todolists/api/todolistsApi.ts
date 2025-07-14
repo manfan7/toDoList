@@ -1,9 +1,9 @@
 import {instance} from "@/common/instance/instance.ts"
-import type {BaseResponseZod, DefaultResponse, toDoList} from "@/common/types"
-import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
+import {BaseResponseZod, DefaultResponse, DomainToDo, toDoList} from "@/common/types"
+import {BaseQueryMeta, createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 import {AUTH_TOKEN} from "@/common/constants";
 
-export const todoListApi = createApi({
+export const todolistsApi = createApi({
   reducerPath: 'todoListApi',
   baseQuery: fetchBaseQuery({
     baseUrl: import.meta.env.VITE_BASE_URL,
@@ -14,15 +14,18 @@ export const todoListApi = createApi({
     }
   }),
   endpoints: (builder) => ({
-    getToDoLists: builder.query<any, void>({
+    getToDoList: builder.query<DomainToDo[], void>({
       query: () => ({
         url: '/todo-lists',
         method: 'GET'
-      })
+      }),
+      transformResponse: (todoLists:toDoList[],_meta:any,_arg:any):DomainToDo[]=>{
+return todoLists.map(item=>({...item,filter:'ALL',entityStatus: "idle" }))
+      }
     })
   })
 });
-
+export const {useGetToDoListQuery,useLazyGetToDoListQuery}= todolistsApi
 
 export const _todolistsApi = {
   getToDoList() {

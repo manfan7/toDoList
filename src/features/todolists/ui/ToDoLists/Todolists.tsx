@@ -1,21 +1,18 @@
 import Grid from "@mui/material/Grid"
 import Paper from "@mui/material/Paper"
+import {FilterValue} from "@/App.tsx"
+import {useCallback, useEffect, useRef, useState} from "react"
+import {ToDoListItem} from "@/features/todolists/ui/TodolistItem/ToDoListItem.tsx"
+import {useAppSelector} from "@/common/hooks/useAppSelector.ts"
+import type {tasksListType} from "@/common/types"
+import {TaskStatus} from "@/common/enum/enum.ts"
 
-import { fetchTodolistsTC, reorderToDo, selectToDoList } from "@/features/todolists/model/toDoList-reducer.ts"
-import { FilterValue } from "@/App.tsx"
-import { useCallback, useEffect, useRef, useState } from "react"
-import { ToDoListItem } from "@/features/todolists/ui/TodolistItem/ToDoListItem.tsx"
-import { useAppSelector } from "@/common/hooks/useAppSelector.ts"
-
-import { useAppDispatch } from "@/common/hooks/useAppDispatch.ts"
-import type { tasksListType } from "@/common/types"
-import { TaskStatus } from "@/common/enum/enum.ts"
-
-import { Skeleton } from "@mui/material"
-import { selectLoadingState } from "@/app/app-slice.ts"
-import { closestCenter, DndContext, DragEndEvent, DragOverlay, type DragStartEvent } from "@dnd-kit/core"
-import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
-import { restrictToWindowEdges } from "@dnd-kit/modifiers"
+import {Skeleton} from "@mui/material"
+import {selectLoadingState} from "@/app/app-slice.ts"
+import {closestCenter, DndContext, DragOverlay, type DragStartEvent} from "@dnd-kit/core"
+import {SortableContext, verticalListSortingStrategy} from "@dnd-kit/sortable"
+import {restrictToWindowEdges} from "@dnd-kit/modifiers"
+import {useGetToDoListQuery} from "@/features/todolists/api/todolistsApi.ts";
 
 export const filterTask = (task: tasksListType, filterVal: FilterValue, tdId: string) => {
   if (filterVal === "ALL") return task[tdId]
@@ -25,46 +22,55 @@ export const filterTask = (task: tasksListType, filterVal: FilterValue, tdId: st
 }
 
 export const Todolists = () => {
-  const toDo = useAppSelector(selectToDoList)
+
   const loading = useAppSelector(selectLoadingState)
-  const dispatch = useAppDispatch()
-  const [optimisticTodolists, setOptimisticTodolists] = useState(toDo)
+    //const [skip, setSkip] = useState(true)
+
   const [activeId, setActiveId] = useState<string | null>(null)
   const isMounted = useRef(false)
 
   // Первоначальная загрузка данных
-  useEffect(() => {
-    dispatch(fetchTodolistsTC())
-  }, [dispatch])
-
+  //const {data} = useGetToDoListQuery(undefined,{skip})
+      // const [trigger,{data }] = useLazyGetToDoListQuery() можно делать lazyloader, выполняется по условию
+    const {data} = useGetToDoListQuery()
+    const [optimisticTodolists, setOptimisticTodolists] = useState(data)
   // Синхронизация локального состояния с Redux
+
   useEffect(() => {
     if (isMounted.current) {
-      setOptimisticTodolists(toDo)
+        if(data){
+            setOptimisticTodolists(data)
+        }
+
     } else {
       isMounted.current = true
     }
-  }, [toDo])
+  }, [data])
 
   const handleDragStart = useCallback((event: DragStartEvent) => {
     setActiveId(event.active.id as string)
   }, [])
-
-  const handleDragEnd = useCallback(
+  /*  const fetchTodolists = () => {
+        setSkip(false)
+    }*/
+  /*const handleDragEnd = useCallback(
     async (event: DragEndEvent) => {
       const { active, over } = event
 
       if (!over || active.id === over.id) return
 
       // Оптимистичное обновление
-      const oldIndex = optimisticTodolists.findIndex((item) => item.id === active.id)
-      const newIndex = optimisticTodolists.findIndex((item) => item.id === over.id)
+      const oldIndex = optimisticTodolists?.findIndex((item) => item.id === active.id)
+      const newIndex = optimisticTodolists?.findIndex((item) => item.id === over.id)
 
       if (oldIndex === -1 || newIndex === -1) return
+if(optimisticTodolists){
+    const newOrder = arrayMove(optimisticTodolists, oldIndex, newIndex)
+    setOptimisticTodolists(newOrder)
+    setActiveId(null)
+}
 
-      const newOrder = arrayMove(optimisticTodolists, oldIndex, newIndex)
-      setOptimisticTodolists(newOrder)
-      setActiveId(null)
+
       try {
         // Фоновая синхронизация с сервером
         await dispatch(
@@ -80,18 +86,18 @@ export const Todolists = () => {
       }
     },
     [dispatch, optimisticTodolists],
-  )
-  console.log("render todo")
+  )*/
+
   return (
     <DndContext
       collisionDetection={closestCenter}
       modifiers={[restrictToWindowEdges]}
       onDragStart={handleDragStart}
-      onDragEnd={handleDragEnd}
+      //onDragEnd={handleDragEnd}
     >
-      <SortableContext items={optimisticTodolists} strategy={verticalListSortingStrategy}>
+      <SortableContext items={data||[]} strategy={verticalListSortingStrategy}>
         <Grid container spacing={2}>
-          {optimisticTodolists.map((t) =>
+          {data?.map((t) =>
             loading === "loading" ? (
               <Grid container key={t.id}>
                 <Skeleton
@@ -146,7 +152,7 @@ export const Todolists = () => {
               transition: "opacity 0.5s ease, transform 0.2s ease backgroundColor 0.4s ease",
             }}
           >
-            <ToDoListItem toDoList={optimisticTodolists.find((t) => t.id === activeId)!} />
+            <ToDoListItem toDoList={optimisticTodolists?.find((t) => t.id === activeId)!} />
           </Paper>
         ) : null}
       </DragOverlay>

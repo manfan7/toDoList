@@ -1,22 +1,27 @@
-import { configureStore } from "@reduxjs/toolkit"
-import { toDoListReducer, toDoListSlice } from "../features/todolists/model/toDoList-reducer.ts"
-import { tasksReducer, tasksSlice } from "../features/todolists/model/tasks-reducer.ts"
-import { appSlice, AppSlice } from "@/app/app-slice.ts"
-import { authReducer, authSlice } from "@/features/auth/model/auth-slice.ts"
+import {configureStore} from "@reduxjs/toolkit"
+import {toDoListReducer, toDoListSlice} from "../features/todolists/model/toDoList-reducer.ts"
+import {tasksReducer, tasksSlice} from "../features/todolists/model/tasks-reducer.ts"
+import {appSlice, AppSlice} from "@/app/app-slice.ts"
+import {authReducer, authSlice} from "@/features/auth/model/auth-slice.ts"
+import {todolistsApi} from "@/features/todolists/api/todolistsApi.ts";
+import {setupListeners} from "@reduxjs/toolkit/query";
 
 // объединение reducer'ов с помощью combineReducers
 //const rootReducer = combineReducers()
 
 // создание store
 export const store = configureStore({
-  reducer: {
-    [tasksSlice.name]: tasksReducer,
-    [toDoListSlice.name]: toDoListReducer,
-    [appSlice.name]: AppSlice,
-    [authSlice.name]: authReducer,
-  },
+    reducer: {
+        [tasksSlice.name]: tasksReducer,
+        [toDoListSlice.name]: toDoListReducer,
+        [appSlice.name]: AppSlice,
+        [authSlice.name]: authReducer,
+        [todolistsApi.reducerPath]: todolistsApi.reducer,
+       },
+    middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware().concat(todolistsApi.middleware),
 })
-
+setupListeners(store.dispatch)
 // автоматическое определение типа всего объекта состояния
 export type RootState = ReturnType<typeof store.getState>
 // автоматическое определение типа метода dispatch
