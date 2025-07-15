@@ -12,7 +12,7 @@ import {selectLoadingState} from "@/app/app-slice.ts"
 import {closestCenter, DndContext, DragEndEvent, DragOverlay, type DragStartEvent} from "@dnd-kit/core"
 import {arrayMove, SortableContext, verticalListSortingStrategy} from "@dnd-kit/sortable"
 import {restrictToWindowEdges} from "@dnd-kit/modifiers"
-import {useGetToDoListQuery} from "@/features/todolists/api/todolistsApi.ts";
+import {useGetToDoListQuery, useReorderToDoListMutation} from "@/features/todolists/api/todolistsApi.ts";
 
 export const filterTask = (task: tasksListType, filterVal: FilterValue, tdId: string) => {
   if (filterVal === "ALL") return task[tdId]
@@ -36,6 +36,7 @@ export const Todolists = () => {
 
       // const [trigger,{data }] = useLazyGetToDoListQuery() можно делать lazyloader, выполняется по условию
     const {data} = useGetToDoListQuery()
+    const [reorder]= useReorderToDoListMutation
     const [optimisticTodolists, setOptimisticTodolists] = useState(data)
   // Синхронизация локального состояния с Redux
 
@@ -70,11 +71,11 @@ if(optimisticTodolists && oldIndex &&newIndex){
     setOptimisticTodolists(newOrder)
     setActiveId(null)
 }
-
+reorder()
 
 
     },
-    [dispatch, optimisticTodolists],
+    [ optimisticTodolists],
   )
 
   return (
@@ -84,9 +85,9 @@ if(optimisticTodolists && oldIndex &&newIndex){
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <SortableContext items={data||[]} strategy={verticalListSortingStrategy}>
+      <SortableContext items={optimisticTodolists} strategy={verticalListSortingStrategy}>
         <Grid container spacing={2}>
-          {data?.map((t) =>
+          {optimisticTodolists?.map((t) =>
             loading === "loading" ? (
               <Grid container key={t.id}>
                 <Skeleton
