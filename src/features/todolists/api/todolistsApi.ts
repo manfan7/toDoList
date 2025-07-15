@@ -3,66 +3,77 @@ import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 import {AUTH_TOKEN} from "@/common/constants";
 
 export const todolistsApi = createApi({
-  reducerPath: 'todoListApi',
-  tagTypes:['toDoList','tasks'],
-  baseQuery: fetchBaseQuery({
-    baseUrl: import.meta.env.VITE_BASE_URL,
-    prepareHeaders: (headers) => {
-      headers.set("API-KEY", import.meta.env.VITE_API_KEY);
-      headers.set('Authorization', `Bearer ${localStorage.getItem(AUTH_TOKEN)}`);
-      return headers;
-    }
-  }),
-  endpoints: (builder) => ({
-    getToDoList: builder.query<DomainToDo[], void>({
-      query: () => ({
-        url: '/todo-lists',
-        method: 'GET'
-      }),
-      transformResponse: (todoLists: toDoList[], _meta: any, _arg: any): DomainToDo[] => {
-        return todoLists.map(item => ({...item, filter: 'ALL', entityStatus: "idle" }))
-      },
-      providesTags:['toDoList']
-    }),
-    createToDoList: builder.mutation<BaseResponseZod, string>({
-      query: (title) => {
-        return {
-          method: 'POST',
-          url: '/todo-lists',
-          body: { title }
+    reducerPath: 'todoListApi',
+    tagTypes: ['toDoList', 'tasks'],
+    baseQuery: fetchBaseQuery({
+        baseUrl: import.meta.env.VITE_BASE_URL,
+        prepareHeaders: (headers) => {
+            headers.set("API-KEY", import.meta.env.VITE_API_KEY);
+            headers.set('Authorization', `Bearer ${localStorage.getItem(AUTH_TOKEN)}`);
+            return headers;
         }
-      },
+    }),
+    endpoints: (builder) => ({
+        getToDoList: builder.query<DomainToDo[], void>({
+            query: () => ({
+                url: '/todo-lists',
+                method: 'GET'
+            }),
+            transformResponse: (todoLists: toDoList[], _meta: any, _arg: any): DomainToDo[] => {
+                return todoLists.map(item => ({...item, filter: 'ALL', entityStatus: "idle"}))
+            },
+            providesTags: ['toDoList']
+        }),
+        createToDoList: builder.mutation<BaseResponseZod, string>({
+            query: (title) => {
+                return {
+                    method: 'POST',
+                    url: '/todo-lists',
+                    body: {title}
+                }
+            },
+            invalidatesTags: ['toDoList']
+        }),
+        deleteToDoList: builder.mutation<DefaultResponse, string>({
+            query: (id) => {
+                return {
+                    method: 'delete',
+                    url: `/todo-lists/${id}`
 
-    }),
-    deleteToDoList:builder.mutation<DefaultResponse,string>({
-      query:(id)=>{
-        return {
-          method:'delete',
-          url:`/todo-lists/${id}`
+                }
+            },
+            invalidatesTags: ['toDoList']
+        }),
+        updateToDoList: builder.mutation<DefaultResponse, { id: string, title: string }>({
+            query: ({id, title}) => {
+                return {
+                    method: 'put',
+                    url: `/todo-lists/${id}`,
+                    body: {title}
+                }
+            },
+            invalidatesTags: ['toDoList']
+        }),
+        reorderToDoList: builder.mutation<BaseResponseZod, { targetId: string, currentId: string }>({
+            query: ({targetId, currentId}) => {
+                return {
+                    method: 'put',
+                    url: `/todo-lists/${currentId}/reorder`,
+                    body: {targetId}
+                }
+            },
+            invalidatesTags: ['toDoList']
+        })
 
-        }
-      }
-    }),
-    updateToDoList:builder.mutation<DefaultResponse,{id:string,title:string}>({
-      query:({id,title})=> {
-        return {
-          method:'put',
-          url:`/todo-lists/${id}`,
-          body:{title}
-        }
-      }
-    }),
-    reorderToDoList:builder.mutation<BaseResponseZod,{targetId: string, currentId: string}>({
-      query:({targetId,currentId})=>{
-        return {
-          method:'put',
-          url:`/todo-lists/${currentId}/reorder`,
-          body:{targetId}
-        }
-      }
     })
-  })
 });
-export const {useGetToDoListQuery,useLazyGetToDoListQuery, useCreateToDoListMutation,useDeleteToDoListMutation,useUpdateToDoListMutation,useReorderToDoListMutation}= todolistsApi
+export const {
+    useGetToDoListQuery,
+    useLazyGetToDoListQuery,
+    useCreateToDoListMutation,
+    useDeleteToDoListMutation,
+    useUpdateToDoListMutation,
+    useReorderToDoListMutation
+} = todolistsApi
 
 

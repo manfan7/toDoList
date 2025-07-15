@@ -9,8 +9,8 @@ import {TaskStatus} from "@/common/enum/enum.ts"
 
 import {Skeleton} from "@mui/material"
 import {selectLoadingState} from "@/app/app-slice.ts"
-import {closestCenter, DndContext, DragOverlay, type DragStartEvent} from "@dnd-kit/core"
-import {SortableContext, verticalListSortingStrategy} from "@dnd-kit/sortable"
+import {closestCenter, DndContext, DragEndEvent, DragOverlay, type DragStartEvent} from "@dnd-kit/core"
+import {arrayMove, SortableContext, verticalListSortingStrategy} from "@dnd-kit/sortable"
 import {restrictToWindowEdges} from "@dnd-kit/modifiers"
 import {useGetToDoListQuery} from "@/features/todolists/api/todolistsApi.ts";
 
@@ -25,12 +25,15 @@ export const Todolists = () => {
 
   const loading = useAppSelector(selectLoadingState)
     //const [skip, setSkip] = useState(true)
-
+  //const {data} = useGetToDoListQuery(undefined,{skip})
+  /*  const fetchTodolists = () => {
+       setSkip(false)
+   }*/
   const [activeId, setActiveId] = useState<string | null>(null)
   const isMounted = useRef(false)
 
   // Первоначальная загрузка данных
-  //const {data} = useGetToDoListQuery(undefined,{skip})
+
       // const [trigger,{data }] = useLazyGetToDoListQuery() можно делать lazyloader, выполняется по условию
     const {data} = useGetToDoListQuery()
     const [optimisticTodolists, setOptimisticTodolists] = useState(data)
@@ -50,10 +53,8 @@ export const Todolists = () => {
   const handleDragStart = useCallback((event: DragStartEvent) => {
     setActiveId(event.active.id as string)
   }, [])
-  /*  const fetchTodolists = () => {
-        setSkip(false)
-    }*/
-  /*const handleDragEnd = useCallback(
+
+  const handleDragEnd = useCallback(
     async (event: DragEndEvent) => {
       const { active, over } = event
 
@@ -64,36 +65,24 @@ export const Todolists = () => {
       const newIndex = optimisticTodolists?.findIndex((item) => item.id === over.id)
 
       if (oldIndex === -1 || newIndex === -1) return
-if(optimisticTodolists){
+if(optimisticTodolists && oldIndex &&newIndex){
     const newOrder = arrayMove(optimisticTodolists, oldIndex, newIndex)
     setOptimisticTodolists(newOrder)
     setActiveId(null)
 }
 
 
-      try {
-        // Фоновая синхронизация с сервером
-        await dispatch(
-          reorderToDo({
-            draggedId: active.id as string,
-            targetId: over.id as string,
-            reordered: newOrder,
-          }),
-        ).unwrap()
-      } catch (error) {
-        // Откат при ошибке
-        setOptimisticTodolists(toDo)
-      }
+
     },
     [dispatch, optimisticTodolists],
-  )*/
+  )
 
   return (
     <DndContext
       collisionDetection={closestCenter}
       modifiers={[restrictToWindowEdges]}
       onDragStart={handleDragStart}
-      //onDragEnd={handleDragEnd}
+      onDragEnd={handleDragEnd}
     >
       <SortableContext items={data||[]} strategy={verticalListSortingStrategy}>
         <Grid container spacing={2}>
