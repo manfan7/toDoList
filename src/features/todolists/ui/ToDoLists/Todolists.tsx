@@ -36,7 +36,7 @@ export const Todolists = () => {
 
       // const [trigger,{data }] = useLazyGetToDoListQuery() можно делать lazyloader, выполняется по условию
     const {data} = useGetToDoListQuery()
-    const [reorder]= useReorderToDoListMutation
+    const [reorder]= useReorderToDoListMutation()
     const [optimisticTodolists, setOptimisticTodolists] = useState(data)
   // Синхронизация локального состояния с Redux
 
@@ -71,11 +71,18 @@ if(optimisticTodolists && oldIndex &&newIndex){
     setOptimisticTodolists(newOrder)
     setActiveId(null)
 }
-reorder()
+        try {
+            await reorder({ currentId: active.id as string, targetId: over.id as string }).unwrap()
+        } catch (error) {
+            // В случае ошибки возвращаем предыдущее состояние
+            setOptimisticTodolists(data || [])
+            console.error('Failed to reorder:', error)
+        }
+
 
 
     },
-    [ optimisticTodolists],
+    [ optimisticTodolists,reorder,data],
   )
 
   return (
@@ -85,7 +92,7 @@ reorder()
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <SortableContext items={optimisticTodolists} strategy={verticalListSortingStrategy}>
+      <SortableContext items={optimisticTodolists|| []} strategy={verticalListSortingStrategy}>
         <Grid container spacing={2}>
           {optimisticTodolists?.map((t) =>
             loading === "loading" ? (
