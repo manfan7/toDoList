@@ -2,10 +2,8 @@ import Grid from "@mui/material/Grid"
 import {EditableSpan} from "@/common/components/EditableSpan/EditableSpan.tsx"
 import IconButton from "@mui/material/IconButton"
 import DeleteIcon from "@mui/icons-material/Delete"
-import {changeTitleTS} from "@/features/todolists/model/toDoList-reducer.ts"
-import {useAppDispatch} from "@/common/hooks/useAppDispatch.ts"
 import type {RequestStatus} from "@/common/types"
-import {useDeleteToDoListMutation} from "@/features/todolists/api/todolistsApi.ts";
+import {useDeleteToDoListMutation, useUpdateToDoListMutation} from "@/features/todolists/api/todolistsApi.ts";
 
 type ToDoListTitle = {
   title: string
@@ -14,13 +12,14 @@ type ToDoListTitle = {
 }
 
 export const ToDoListTitle = ({ title, id, entityStatus }: ToDoListTitle) => {
-  const dispatch = useAppDispatch()
+
   const [deleToDoList]= useDeleteToDoListMutation()
+  const [updateToDo]= useUpdateToDoListMutation()
   const removeToDoListHandler = () => {
    deleToDoList(id)
   }
   const changeToDoTitleHandler = (title: string) => {
-    dispatch(changeTitleTS({ title, id }))
+    updateToDo({id,title})
   }
   return (
     <Grid

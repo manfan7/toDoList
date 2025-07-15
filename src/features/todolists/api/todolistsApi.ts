@@ -1,10 +1,10 @@
-import {instance} from "@/common/instance/instance.ts"
 import {BaseResponseZod, DefaultResponse, DomainToDo, toDoList} from "@/common/types"
-import {BaseQueryMeta, createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
+import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 import {AUTH_TOKEN} from "@/common/constants";
 
 export const todolistsApi = createApi({
   reducerPath: 'todoListApi',
+  tagTypes:['toDoList','tasks'],
   baseQuery: fetchBaseQuery({
     baseUrl: import.meta.env.VITE_BASE_URL,
     prepareHeaders: (headers) => {
@@ -21,7 +21,8 @@ export const todolistsApi = createApi({
       }),
       transformResponse: (todoLists: toDoList[], _meta: any, _arg: any): DomainToDo[] => {
         return todoLists.map(item => ({...item, filter: 'ALL', entityStatus: "idle" }))
-      }
+      },
+      providesTags:['toDoList']
     }),
     createToDoList: builder.mutation<BaseResponseZod, string>({
       query: (title) => {
@@ -30,7 +31,8 @@ export const todolistsApi = createApi({
           url: '/todo-lists',
           body: { title }
         }
-      }
+      },
+
     }),
     deleteToDoList:builder.mutation<DefaultResponse,string>({
       query:(id)=>{
@@ -40,17 +42,27 @@ export const todolistsApi = createApi({
 
         }
       }
+    }),
+    updateToDoList:builder.mutation<DefaultResponse,{id:string,title:string}>({
+      query:({id,title})=> {
+        return {
+          method:'put',
+          url:`/todo-lists/${id}`,
+          body:{title}
+        }
+      }
+    }),
+    reorderToDoList:builder.mutation<BaseResponseZod,{targetId: string, currentId: string}>({
+      query:({targetId,currentId})=>{
+        return {
+          method:'put',
+          url:`/todo-lists/${currentId}/reorder`,
+          body:{targetId}
+        }
+      }
     })
   })
 });
-export const {useGetToDoListQuery,useLazyGetToDoListQuery, useCreateToDoListMutation,useDeleteToDoListMutation}= todolistsApi
+export const {useGetToDoListQuery,useLazyGetToDoListQuery, useCreateToDoListMutation,useDeleteToDoListMutation,useUpdateToDoListMutation,useReorderToDoListMutation}= todolistsApi
 
-export const _todolistsApi = {
 
-  updateToDoList(id: string, title: string) {
-    return instance.put<DefaultResponse>(`/todo-lists/${id}`, { title })
-  },
-  reorderToDoList(targetId: string, currentId: string) {
-    return instance.put<BaseResponseZod>(`/todo-lists/${currentId}/reorder`, { targetId })
-  },
-}
