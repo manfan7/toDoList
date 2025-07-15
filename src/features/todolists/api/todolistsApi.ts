@@ -19,24 +19,34 @@ export const todolistsApi = createApi({
         url: '/todo-lists',
         method: 'GET'
       }),
-      transformResponse: (todoLists:toDoList[],_meta:any,_arg:any):DomainToDo[]=>{
-return todoLists.map(item=>({...item,filter:'ALL',entityStatus: "idle" }))
+      transformResponse: (todoLists: toDoList[], _meta: any, _arg: any): DomainToDo[] => {
+        return todoLists.map(item => ({...item, filter: 'ALL', entityStatus: "idle" }))
+      }
+    }),
+    createToDoList: builder.mutation<BaseResponseZod, string>({
+      query: (title) => {
+        return {
+          method: 'POST',
+          url: '/todo-lists',
+          body: { title }
+        }
+      }
+    }),
+    deleteToDoList:builder.mutation<DefaultResponse,string>({
+      query:(id)=>{
+        return {
+          method:'delete',
+          url:`/todo-lists/${id}`
+
+        }
       }
     })
   })
 });
-export const {useGetToDoListQuery,useLazyGetToDoListQuery}= todolistsApi
+export const {useGetToDoListQuery,useLazyGetToDoListQuery, useCreateToDoListMutation,useDeleteToDoListMutation}= todolistsApi
 
 export const _todolistsApi = {
-  getToDoList() {
-    return instance.get<toDoList[]>("/todo-lists")
-  },
-  createToDoList(title: string) {
-    return instance.post<BaseResponseZod>("/todo-lists", { title })
-  },
-  deleteToDoList(id: string) {
-    return instance.delete<DefaultResponse>(`/todo-lists/${id}`)
-  },
+
   updateToDoList(id: string, title: string) {
     return instance.put<DefaultResponse>(`/todo-lists/${id}`, { title })
   },

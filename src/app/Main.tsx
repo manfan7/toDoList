@@ -1,16 +1,16 @@
 import Container from "@mui/material/Container"
 import Grid from "@mui/material/Grid"
-import { FullInput } from "@/common/components/CreateItemForm/FullInput.tsx"
-import { addtoDoListTC } from "@/features/todolists/model/toDoList-reducer.ts"
-import { useAppDispatch } from "@/common/hooks/useAppDispatch.ts"
-import { Todolists } from "@/features/todolists/ui/ToDoLists/Todolists.tsx"
+import {FullInput} from "@/common/components/CreateItemForm/FullInput.tsx"
+import {Todolists} from "@/features/todolists/ui/ToDoLists/Todolists.tsx"
+import {useCreateToDoListMutation} from "@/features/todolists/api/todolistsApi.ts";
 
 export const Main = () => {
-  const dispatch = useAppDispatch()
+    const [createToDoList]= useCreateToDoListMutation()
 
   const addToDoList = (value: string) => {
-    dispatch(addtoDoListTC({ title: value }))
+   createToDoList(value)
   }
+
 
   return (
     <Container maxWidth={"xl"}>
