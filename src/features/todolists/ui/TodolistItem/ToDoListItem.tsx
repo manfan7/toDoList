@@ -1,22 +1,23 @@
-import { FullInput } from "@/common/components/index.ts"
+import {FullInput} from "@/common/components/index.ts"
 import Grid from "@mui/material/Grid"
-import { useAppDispatch } from "@/common/hooks/useAppDispatch.ts"
-import { addTask } from "@/features/todolists/model/tasks-reducer.ts"
-import { ToDoListTitle } from "@/features/todolists/ui/TodolistItem/TodolistTitle/ToDoListTitle.tsx"
-import { FilterButtons } from "@/features/todolists/ui/TodolistItem/FilterButtons/FilterButtons.tsx"
-import { Tasks } from "@/features/todolists/ui/TodolistItem/Tasks/Tasks.tsx"
-import type { DomainToDo } from "@/common/types"
-import { useSortable } from "@dnd-kit/sortable"
+import {ToDoListTitle} from "@/features/todolists/ui/TodolistItem/TodolistTitle/ToDoListTitle.tsx"
+import {FilterButtons} from "@/features/todolists/ui/TodolistItem/FilterButtons/FilterButtons.tsx"
+import {Tasks} from "@/features/todolists/ui/TodolistItem/Tasks/Tasks.tsx"
+import type {DomainToDo} from "@/common/types"
+import {useSortable} from "@dnd-kit/sortable"
 import BackHandIcon from "@mui/icons-material/BackHand"
-import { CSS } from "@dnd-kit/utilities"
+import {CSS} from "@dnd-kit/utilities"
+import {useCreateTasksMutation} from "@/features/todolists/api/tasksApi.ts";
+
 type ToDoProps = {
   toDoList: DomainToDo
 }
 
 export const ToDoListItem = ({ toDoList: { title, filter, id, entityStatus } }: ToDoProps) => {
-  const dispatch = useAppDispatch()
+
+    const [addTask] = useCreateTasksMutation()
   const addTaskHandler = (value: string) => {
-    dispatch(addTask({ todolistId: id, title: value }))
+   addTask({id, title: value })
   }
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: id })
 

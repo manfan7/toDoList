@@ -51,7 +51,7 @@ export const todolistsApi = baseApi.injectEndpoints({
                     body: {targetId}
                 }
             },
-            //invalidatesTags: ['toDoList']
+
         })
 
     })

@@ -14,11 +14,11 @@ import {arrayMove, SortableContext, verticalListSortingStrategy} from "@dnd-kit/
 import {restrictToWindowEdges} from "@dnd-kit/modifiers"
 import {useGetToDoListQuery, useReorderToDoListMutation} from "@/features/todolists/api/todolistsApi.ts";
 
-export const filterTask = (task: tasksListType, filterVal: FilterValue, tdId: string) => {
-  if (filterVal === "ALL") return task[tdId]
+export const filterTask = (task: tasksListType| undefined, filterVal: FilterValue, tdId: string) => {
+  if (filterVal === "ALL") return task?.[tdId]||[]
   return filterVal === "Completed"
-    ? task[tdId].filter((t) => t.status === TaskStatus.Completed)
-    : task[tdId].filter((t) => t.status === TaskStatus.New)
+    ? task?.[tdId]?.filter((t) => t.status === TaskStatus.Completed)
+    : task?.[tdId]?.filter((t) => t.status === TaskStatus.New)
 }
 
 export const Todolists = () => {
