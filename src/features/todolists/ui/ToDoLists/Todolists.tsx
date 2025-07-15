@@ -66,8 +66,8 @@ export const Todolists = () => {
       const newIndex = optimisticTodolists?.findIndex((item) => item.id === over.id)
 
       if (oldIndex === -1 || newIndex === -1) return
-if(optimisticTodolists && oldIndex &&newIndex){
-    const newOrder = arrayMove(optimisticTodolists, oldIndex, newIndex)
+if(optimisticTodolists ){
+    const newOrder = arrayMove(optimisticTodolists, oldIndex||+active.id, newIndex||+over.id)
     setOptimisticTodolists(newOrder)
     setActiveId(null)
 }
@@ -78,8 +78,6 @@ if(optimisticTodolists && oldIndex &&newIndex){
             setOptimisticTodolists(data || [])
             console.error('Failed to reorder:', error)
         }
-
-
 
     },
     [ optimisticTodolists,reorder,data],

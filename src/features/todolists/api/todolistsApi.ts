@@ -1,18 +1,7 @@
 import {BaseResponseZod, DefaultResponse, DomainToDo, toDoList} from "@/common/types"
-import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
-import {AUTH_TOKEN} from "@/common/constants";
+import {baseApi} from "@/features/todolists/api/baseApi.ts";
 
-export const todolistsApi = createApi({
-    reducerPath: 'todoListApi',
-    tagTypes: ['toDoList', 'tasks'],
-    baseQuery: fetchBaseQuery({
-        baseUrl: import.meta.env.VITE_BASE_URL,
-        prepareHeaders: (headers) => {
-            headers.set("API-KEY", import.meta.env.VITE_API_KEY);
-            headers.set('Authorization', `Bearer ${localStorage.getItem(AUTH_TOKEN)}`);
-            return headers;
-        }
-    }),
+export const todolistsApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
         getToDoList: builder.query<DomainToDo[], void>({
             query: () => ({
@@ -62,7 +51,7 @@ export const todolistsApi = createApi({
                     body: {targetId}
                 }
             },
-            invalidatesTags: ['toDoList']
+            //invalidatesTags: ['toDoList']
         })
 
     })

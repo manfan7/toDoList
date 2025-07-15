@@ -4,20 +4,21 @@ import Grid from "@mui/material/Grid"
 import IconButton from "@mui/material/IconButton"
 import MenuIcon from "@mui/icons-material/Menu"
 import Typography from "@mui/material/Typography"
-import { NavButton } from "@/common/components/NavButton/NavButton.tsx"
+import {NavButton} from "@/common/components/NavButton/NavButton.tsx"
 import FormControlLabel from "@mui/material/FormControlLabel"
 import Switch from "@mui/material/Switch"
 import AppBar from "@mui/material/AppBar"
-import { useAppSelector } from "@/common/hooks/useAppSelector.ts"
+import {useAppSelector} from "@/common/hooks/useAppSelector.ts"
 
-import { useAppDispatch } from "@/common/hooks/useAppDispatch.ts"
-import { changeThemeModeAC, selectThemeMode } from "@/app/app-slice.ts"
-import { LinearProgress } from "@mui/material"
-import { selectLoadingState } from "@/app/app-selectrors.ts"
-import { Link, useNavigate } from "react-router"
-import { Path } from "@/common/routing/Routing.tsx"
-import { logoutTc, selectIsLoggedIn } from "@/features/auth/model/auth-slice.ts"
-import { clearData } from "@/features/todolists/model/toDoList-reducer.ts"
+import {useAppDispatch} from "@/common/hooks/useAppDispatch.ts"
+import {changeThemeModeAC, loginTC, selectIsLoggedIn, selectThemeMode} from "@/app/app-slice.ts"
+import {LinearProgress} from "@mui/material"
+import {selectLoadingState} from "@/app/app-selectrors.ts"
+import {Link, useNavigate} from "react-router"
+import {Path} from "@/common/routing/Routing.tsx"
+import {useLogoutMutation} from "@/features/auth/api/authapi.ts";
+import {ResultCode} from "@/common/enum/enum.ts";
+import {AUTH_TOKEN} from "@/common/constants";
 
 export const Header = () => {
   const themeMode = useAppSelector(selectThemeMode)
@@ -25,14 +26,23 @@ export const Header = () => {
   const logined = useAppSelector(selectIsLoggedIn)
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
+  const [logout] = useLogoutMutation()
   const changeMode = () => {
     dispatch(changeThemeModeAC({ themeMode: themeMode === "light" ? "dark" : "light" }))
   }
 
   const logoutHandler = () => {
-    dispatch(logoutTc())
-    dispatch(clearData())
-    navigate(Path.Login)
+    logout().then((res)=>{
+      if(res.data?.resultCode===ResultCode.Success){
+
+        dispatch(loginTC({isLoggedIn:false}))
+        localStorage.removeItem(AUTH_TOKEN)
+
+        navigate(Path.Login)
+      }
+    })
+
+
   }
   return (
     <AppBar

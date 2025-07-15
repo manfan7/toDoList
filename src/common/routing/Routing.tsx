@@ -5,7 +5,8 @@ import { Page404 } from "@/common/components/Page404/Page404.tsx"
 import { Faq } from "@/features/FAQ/ui"
 import { ProtectedRoutes } from "@/common/components/ProtectedRoutes/ProtectedRoutes.tsx"
 import { useAppSelector } from "@/common/hooks/useAppSelector.ts"
-import { selectIsLoggedIn } from "@/features/auth/model/auth-slice.ts"
+import {selectIsLoggedIn} from "@/app/app-slice.ts";
+
 
 export const Path = {
   Main: "/",

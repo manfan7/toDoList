@@ -31,31 +31,7 @@ export const toDoListSlice = createAppSlice({
       clearData: create.reducer((_state, _action) => {
         return initialState
       }),
-      reorderToDo: create.asyncThunk(
-        async (
-          args: { draggedId: string | undefined; targetId: string | undefined; reordered: DomainToDo[] | undefined },
-          thunkAPI,
-        ) => {
-          try {
-            if (args.targetId && args.draggedId) {
-              const res = await todolistsApi.reorderToDoList(args.targetId, args.draggedId)
-              if (res.data.resultCode === ResultCode.Success) {
-                return args
-              }
-            }
-          } catch (err) {
-            handleServerError(thunkAPI.dispatch, err)
-            return thunkAPI.rejectWithValue(null)
-          }
-        },
-        {
-          fulfilled: (state, action) => {
-            if (action) {
-              state.todo = action.payload?.reordered ?? state.todo
-            }
-          },
-        },
-      ),
+
       fetchTodolistsTC: create.asyncThunk(
         async (_, { dispatch, rejectWithValue }) => {
           try {
@@ -129,26 +105,7 @@ export const toDoListSlice = createAppSlice({
           },
         },
       ),
-      changeTitleTS: create.asyncThunk(
-        async (arg: { id: string; title: string }, thunkAPI) => {
-          try {
-            const res = await todolistsApi.updateToDoList(arg.id, arg.title)
-            defaultResponseSchema.parse(res.data)
-            return arg
-          } catch (err) {
-            handleServerError(thunkAPI.dispatch, err)
-            return thunkAPI.rejectWithValue(null)
-          }
-        },
-        {
-          fulfilled: (state, action) => {
-            const index = state.todo.findIndex((todo) => todo.id === action.payload.id)
-            if (index !== -1) {
-              state.todo[index].title = action.payload.title
-            }
-          },
-        },
-      ),
+
     }
   },
 
@@ -162,10 +119,10 @@ export const {
   changeFilterAC,
   fetchTodolistsTC,
   addtoDoListTC,
-  changeTitleTS,
+
   removeToDoListTC,
   changeEntityStatus,
-  reorderToDo,
+
   clearData,
 } = toDoListSlice.actions
 export const { selectToDoList } = toDoListSlice.selectors

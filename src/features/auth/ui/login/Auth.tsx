@@ -1,23 +1,29 @@
 import Grid from "@mui/material/Grid"
-import { FormControl, FormGroup, FormLabel, TextField } from "@mui/material"
+import {FormControl, FormGroup, FormLabel, TextField} from "@mui/material"
 import FormControlLabel from "@mui/material/FormControlLabel"
 import Checkbox from "@mui/material/Checkbox"
 import Button from "@mui/material/Button"
 import Typography from "@mui/material/Typography"
-import { Controller, type SubmitHandler, useForm } from "react-hook-form"
+import {Controller, type SubmitHandler, useForm} from "react-hook-form"
 import styles from "./Login.module.css"
-import { type LoginInputs, loginSchema } from "@/features/auth/lib/shemas"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useAppDispatch } from "@/common/hooks/useAppDispatch.ts"
-import { loginTC, selectIsLoggedIn } from "@/features/auth/model/auth-slice.ts"
-import { useAppSelector } from "@/common/hooks/useAppSelector.ts"
-import { Navigate } from "react-router"
-import { Path } from "@/common/routing/Routing.tsx"
+import {type LoginInputs, loginSchema} from "@/features/auth/lib/shemas"
+import {zodResolver} from "@hookform/resolvers/zod"
+
+import {useAppSelector} from "@/common/hooks/useAppSelector.ts"
+import {Navigate} from "react-router"
+import {Path} from "@/common/routing/Routing.tsx"
+import {loginTC, selectIsLoggedIn} from "@/app/app-slice.ts";
+import {useLoginMutation} from "@/features/auth/api/authapi.ts";
+import {ResultCode} from "@/common/enum/enum.ts";
+import {useAppDispatch} from "@/common/hooks/useAppDispatch.ts";
+import {AUTH_TOKEN} from "@/common/constants";
+
 export const Login = () => {
   //const themeMode = useAppSelector(selectThemeMode)
   //const theme = getTheme(themeMode)
-  const dispatch = useAppDispatch()
+const dispatch = useAppDispatch()
   const logined = useAppSelector(selectIsLoggedIn)
+  const [login] = useLoginMutation()
 
   const {
     register,
@@ -31,8 +37,16 @@ export const Login = () => {
     resolver: zodResolver(loginSchema),
   })
   const onSubmit: SubmitHandler<LoginInputs> = (data) => {
-    dispatch(loginTC(data))
-    reset()
+    login(data).then((res)=>{
+      if(res.data?.resultCode===ResultCode.Success){
+        dispatch(loginTC({isLoggedIn:true}))
+        localStorage.setItem(AUTH_TOKEN,res.data.data.token)
+      }
+      reset()
+    }).catch((errors)=>{
+      console.log(errors)
+      reset({password:''});
+    })
   }
   if (logined) {
     return <Navigate to={Path.Main} />

@@ -1,15 +1,18 @@
-import { ThemeProvider } from "@mui/material/styles"
-import { CircularProgress, CssBaseline } from "@mui/material"
-import { useAppSelector } from "@/common/hooks/useAppSelector.ts"
-import { selectThemeMode } from "@/app/app-selectrors.ts"
-import { getTheme } from "@/common/theme/theme.ts"
-import { Header } from "@/common/components/Header/Header.tsx"
+import {ThemeProvider} from "@mui/material/styles"
+import {CircularProgress, CssBaseline} from "@mui/material"
+import {useAppSelector} from "@/common/hooks/useAppSelector.ts"
+import {selectThemeMode} from "@/app/app-selectrors.ts"
+import {getTheme} from "@/common/theme/theme.ts"
+import {Header} from "@/common/components/Header/Header.tsx"
 import styles from "./App.module.css"
-import { ErrorSnackBar } from "@/common/components/ErrorSnackBar/ErrorSnackBar.tsx"
-import { Routing } from "@/common/routing/Routing.tsx"
-import { useAppDispatch } from "@/common/hooks/useAppDispatch.ts"
-import { useEffect, useState } from "react"
-import { authMe } from "@/features/auth/model/auth-slice.ts"
+import {ErrorSnackBar} from "@/common/components/ErrorSnackBar/ErrorSnackBar.tsx"
+import {Routing} from "@/common/routing/Routing.tsx"
+import {useAppDispatch} from "@/common/hooks/useAppDispatch.ts"
+import {useEffect, useState} from "react"
+
+import {useAuthMeQuery} from "@/features/auth/api/authapi.ts";
+import {ResultCode} from "@/common/enum/enum.ts";
+import {loginTC} from "@/app/app-slice.ts";
 
 export type FilterValue = "ALL" | "Active" | "Completed"
 
@@ -18,24 +21,27 @@ export const App = () => {
   const [isinit, setIsinit] = useState(false)
   const theme = getTheme(themeMode)
   const dispatch = useAppDispatch()
+    const {data,isLoading} = useAuthMeQuery()
+
   useEffect(() => {
-    dispatch(authMe()).then(() => {
+  if(!isLoading){
       setIsinit(true)
-    })
-  }, [])
-  if (!isinit) {
-    return (
-      <div className={styles.circularProgressContainer}>
-        <CircularProgress size={150} thickness={3} />
-      </div>
-    )
   }
+  if(data?.resultCode===ResultCode.Success){
+      dispatch(loginTC({isLoggedIn:true}))
+  }
+  }, [isLoading])
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <div className={styles.app}>
         <Header />
-        <Routing />
+          {!isinit && (<div className={styles.circularProgressContainer}>
+              <CircularProgress size={150} thickness={3} />
+          </div>)}
+          {isinit && <Routing />}
+
         {/*<Test />*/}
       </div>
       <ErrorSnackBar />
