@@ -4,7 +4,7 @@ import {FilterValue} from "@/App.tsx"
 import {useCallback, useEffect, useRef, useState} from "react"
 import {ToDoListItem} from "@/features/todolists/ui/TodolistItem/ToDoListItem.tsx"
 import {useAppSelector} from "@/common/hooks/useAppSelector.ts"
-import type {tasksListType} from "@/common/types"
+import {DomainTask} from "@/common/types"
 import {TaskStatus} from "@/common/enum/enum.ts"
 
 import {Skeleton} from "@mui/material"
@@ -14,11 +14,11 @@ import {arrayMove, SortableContext, verticalListSortingStrategy} from "@dnd-kit/
 import {restrictToWindowEdges} from "@dnd-kit/modifiers"
 import {useGetToDoListQuery, useReorderToDoListMutation} from "@/features/todolists/api/todolistsApi.ts";
 
-export const filterTask = (task: tasksListType| undefined, filterVal: FilterValue, tdId: string) => {
-  if (filterVal === "ALL") return task?.[tdId]||[]
+export const filterTask = (task: DomainTask[]| undefined, filterVal: FilterValue) => {
+  if (filterVal === "ALL") return task||[]
   return filterVal === "Completed"
-    ? task?.[tdId]?.filter((t) => t.status === TaskStatus.Completed)
-    : task?.[tdId]?.filter((t) => t.status === TaskStatus.New)
+    ? task?.filter((t) => t.status === TaskStatus.Completed)
+    : task?.filter((t) => t.status === TaskStatus.New)
 }
 
 export const Todolists = () => {

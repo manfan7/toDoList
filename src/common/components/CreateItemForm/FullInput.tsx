@@ -44,7 +44,7 @@ export const FullInput = ({ addTask, addTaskTitle, disabled = false }: FullInput
             fontFamily: "Arial", // Шрифт
             fontWeight: 600, // Жирность
             fontStyle: "italic", // Курсив
-            color: "#ffffff", // Цвет текста
+
           },
         }}
         value={inputValue}

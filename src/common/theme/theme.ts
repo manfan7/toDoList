@@ -23,7 +23,7 @@ export const getTheme = (themeMode: ThemeMode) => {
             },
             input: {
               fontSize: "16px",
-              color: "white",
+              color: themeMode === "light" ? "black" : "white",
             },
           },
         },

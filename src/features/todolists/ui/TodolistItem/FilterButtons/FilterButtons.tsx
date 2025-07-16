@@ -15,6 +15,7 @@ export const FilterButtons = ({ filter, id }: FilterButtons) => {
   const dispatch = useAppDispatch()
 
   const changeFilter = (value: FilterValue) => {
+
     dispatch(changeFilterAC({ filter: value, id }))
   }
   return (

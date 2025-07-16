@@ -20,7 +20,9 @@ export const toDoListSlice = createAppSlice({
   initialState,
   reducers: (create) => {
     return {
+
       changeFilterAC: create.reducer<{ filter: FilterValue; id: string }>((state, action) => {
+
         const index = state.todo.findIndex((i) => i.id === action.payload.id)
         if (index !== -1) state.todo[index].filter = action.payload.filter
       }),
@@ -117,7 +119,7 @@ export const toDoListSlice = createAppSlice({
 export const toDoListReducer = toDoListSlice.reducer
 export const {
   changeFilterAC,
-  fetchTodolistsTC,
+
   addtoDoListTC,
 
   removeToDoListTC,
