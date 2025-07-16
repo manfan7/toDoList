@@ -14,8 +14,8 @@ type Tasks = {
 export const Tasks = ({ filter, id, entityStatus }: Tasks) => {
 
   const {data} = useGetTasksQuery(id)
-
-  let tasksForToDoList = filterTask(data?.items, filter, id)
+  console.log(data)
+  let tasksForToDoList = filterTask(data?.items, filter)
 
 
   return (

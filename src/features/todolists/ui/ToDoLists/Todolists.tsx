@@ -15,7 +15,9 @@ import {restrictToWindowEdges} from "@dnd-kit/modifiers"
 import {useGetToDoListQuery, useReorderToDoListMutation} from "@/features/todolists/api/todolistsApi.ts";
 
 export const filterTask = (task: DomainTask[]| undefined, filterVal: FilterValue) => {
-  if (filterVal === "ALL") return task||[]
+
+    if (filterVal === "ALL") return task||[]
+
   return filterVal === "Completed"
     ? task?.filter((t) => t.status === TaskStatus.Completed)
     : task?.filter((t) => t.status === TaskStatus.New)
