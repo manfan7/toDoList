@@ -8,12 +8,14 @@ import {useSortable} from "@dnd-kit/sortable"
 import BackHandIcon from "@mui/icons-material/BackHand"
 import {CSS} from "@dnd-kit/utilities"
 import {useCreateTasksMutation} from "@/features/todolists/api/tasksApi.ts";
+import {FilterValue} from "@/App.tsx";
 
 type ToDoProps = {
   toDoList: DomainToDo
+    changefilter:(filter:FilterValue,id:string)=>void
 }
 
-export const ToDoListItem = ({ toDoList: { title, filter, id, entityStatus } }: ToDoProps) => {
+export const ToDoListItem = ({ toDoList: { title, filter, id, entityStatus },changefilter }: ToDoProps) => {
 
     const [addTask] = useCreateTasksMutation()
   const addTaskHandler = (value: string) => {
@@ -67,7 +69,7 @@ export const ToDoListItem = ({ toDoList: { title, filter, id, entityStatus } }: 
         <ToDoListTitle title={title} id={id} entityStatus={entityStatus} />
         <FullInput addTask={addTaskHandler} disabled={entityStatus === "loading"} />
         <Tasks filter={filter} id={id} entityStatus={entityStatus} />
-        <FilterButtons filter={filter} id={id} />
+        <FilterButtons changefilter={changefilter} filter={filter} id={id} />
       </Grid>
     </div>
   )

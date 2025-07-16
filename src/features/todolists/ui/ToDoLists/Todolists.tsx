@@ -15,7 +15,7 @@ import {restrictToWindowEdges} from "@dnd-kit/modifiers"
 import {useGetToDoListQuery, useReorderToDoListMutation} from "@/features/todolists/api/todolistsApi.ts";
 
 export const filterTask = (task: DomainTask[]| undefined, filterVal: FilterValue) => {
-    console.log(filterVal)
+
     if (filterVal === "ALL") return task||[]
 
   return filterVal === "Completed"
@@ -38,7 +38,8 @@ export const Todolists = () => {
 
       // const [trigger,{data }] = useLazyGetToDoListQuery() можно делать lazyloader, выполняется по условию
     const {data} = useGetToDoListQuery()
-    console.log(data)
+
+
     const [reorder]= useReorderToDoListMutation()
     const [optimisticTodolists, setOptimisticTodolists] = useState(data)
   // Синхронизация локального состояния с Redux
@@ -47,13 +48,20 @@ export const Todolists = () => {
     if (isMounted.current) {
         if(data){
             setOptimisticTodolists(data)
+
         }
 
     } else {
       isMounted.current = true
     }
   }, [data])
-
+  const changeFilter = (filter: FilterValue, id: string) => {
+        setOptimisticTodolists(prev =>
+            prev?.map(todo =>
+                todo.id === id ? { ...todo, filter } : todo
+            ) ?? []
+        )
+    }
   const handleDragStart = useCallback((event: DragStartEvent) => {
     setActiveId(event.active.id as string)
   }, [])
@@ -123,7 +131,7 @@ if(optimisticTodolists ){
                     },
                   }}
                 >
-                  <ToDoListItem toDoList={t} />
+                  <ToDoListItem changefilter={changeFilter} toDoList={t} />
                 </Paper>
               </Grid>
             ),
@@ -150,7 +158,7 @@ if(optimisticTodolists ){
               transition: "opacity 0.5s ease, transform 0.2s ease backgroundColor 0.4s ease",
             }}
           >
-            <ToDoListItem toDoList={optimisticTodolists?.find((t) => t.id === activeId)!} />
+            <ToDoListItem changefilter={changeFilter} toDoList={optimisticTodolists?.find((t) => t.id === activeId)!} />
           </Paper>
         ) : null}
       </DragOverlay>
