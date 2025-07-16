@@ -15,7 +15,7 @@ import {restrictToWindowEdges} from "@dnd-kit/modifiers"
 import {useGetToDoListQuery, useReorderToDoListMutation} from "@/features/todolists/api/todolistsApi.ts";
 
 export const filterTask = (task: DomainTask[]| undefined, filterVal: FilterValue) => {
-
+    console.log(filterVal)
     if (filterVal === "ALL") return task||[]
 
   return filterVal === "Completed"
@@ -38,6 +38,7 @@ export const Todolists = () => {
 
       // const [trigger,{data }] = useLazyGetToDoListQuery() можно делать lazyloader, выполняется по условию
     const {data} = useGetToDoListQuery()
+    console.log(data)
     const [reorder]= useReorderToDoListMutation()
     const [optimisticTodolists, setOptimisticTodolists] = useState(data)
   // Синхронизация локального состояния с Redux

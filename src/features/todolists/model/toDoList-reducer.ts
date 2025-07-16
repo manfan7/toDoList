@@ -12,6 +12,7 @@ import { ResultCode } from "@/common/enum/enum.ts"
 import { handleServerError } from "@/common/utils/handleServerErrors.ts"
 import { handleAppError } from "@/common/utils/handleAppErrors.ts"
 import { todolistSchema } from "@/common/types/lib/zodtypes/todolistapitypes.ts"
+import {current} from "@reduxjs/toolkit";
 const initialState = {
   todo: [] as DomainToDo[],
 }
@@ -23,6 +24,7 @@ export const toDoListSlice = createAppSlice({
       changeFilterAC: create.reducer<{ filter: FilterValue; id: string }>((state, action) => {
 
         const index = state.todo.findIndex((i) => i.id === action.payload.id)
+
         if (index !== -1) state.todo[index].filter = action.payload.filter
       }),
       changeEntityStatus: create.reducer<{ status: RequestStatus; id: string }>((state, action) => {
