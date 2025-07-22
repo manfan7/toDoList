@@ -26,11 +26,7 @@ export const filterTask = (task: DomainTask[]| undefined, filterVal: FilterValue
 export const Todolists = () => {
 
   const loading = useAppSelector(selectLoadingState)
-    //const [skip, setSkip] = useState(true)
-  //const {data} = useGetToDoListQuery(undefined,{skip})
-  /*  const fetchTodolists = () => {
-       setSkip(false)
-   }*/
+
   const [activeId, setActiveId] = useState<string | null>(null)
   const isMounted = useRef(false)
 
