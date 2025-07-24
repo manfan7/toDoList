@@ -1,4 +1,4 @@
-import {type DomainToDo, type RequestStatus,} from "@/common/types"
+import {type DomainToDo} from "@/common/types"
 import {createAppSlice} from "@/common/utils"
 
 const initialState = {
@@ -7,13 +7,9 @@ const initialState = {
 export const toDoListSlice = createAppSlice({
     name: "todoLists",
     initialState,
-    reducers: (create) => {
+    reducers: (_create) => {
         return {
 
-            changeEntityStatus: create.reducer<{ status: RequestStatus; id: string }>((state, action) => {
-                const index = state.todo.findIndex((i) => i.id === action.payload.id)
-                if (index !== -1) state.todo[index].entityStatus = action.payload.status
-            }),
 
 
 
@@ -32,7 +28,7 @@ export const {
 
 
 
-    changeEntityStatus,
+
 
 
 } = toDoListSlice.actions

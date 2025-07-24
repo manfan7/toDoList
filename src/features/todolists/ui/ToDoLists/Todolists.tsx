@@ -6,13 +6,12 @@ import {ToDoListItem} from "@/features/todolists/ui/TodolistItem/ToDoListItem.ts
 import {useAppSelector} from "@/common/hooks/useAppSelector.ts"
 import {DomainTask} from "@/common/types"
 import {TaskStatus} from "@/common/enum/enum.ts"
-
-import {Skeleton} from "@mui/material"
 import {selectLoadingState} from "@/app/app-slice.ts"
 import {closestCenter, DndContext, DragEndEvent, DragOverlay, type DragStartEvent} from "@dnd-kit/core"
 import {arrayMove, SortableContext, verticalListSortingStrategy} from "@dnd-kit/sortable"
 import {restrictToWindowEdges} from "@dnd-kit/modifiers"
 import {useGetToDoListQuery, useReorderToDoListMutation} from "@/features/todolists/api/todolistsApi.ts";
+import {TodolistSkeleton} from "@/features/todolists/ui/ToDoLists/toDoListSkeleton.tsx";
 
 export const filterTask = (task: DomainTask[]| undefined, filterVal: FilterValue) => {
 
@@ -33,22 +32,22 @@ export const Todolists = () => {
   // Первоначальная загрузка данных
 
       // const [trigger,{data }] = useLazyGetToDoListQuery() можно делать lazyloader, выполняется по условию
-    const {data} = useGetToDoListQuery()
+    const {data:todo,isLoading,error} = useGetToDoListQuery()
 
-
+    console.log(todo,isLoading,error)
     const [reorder]= useReorderToDoListMutation()
-    const [optimisticTodolists, setOptimisticTodolists] = useState(data)
+    const [optimisticTodolists, setOptimisticTodolists] = useState(todo)
   // Синхронизация локального состояния с Redux
 
   useEffect(() => {
     if (isMounted.current) {
-        if(data){
-            setOptimisticTodolists(data)
+        if(todo){
+            setOptimisticTodolists(todo)
         }
     } else {
       isMounted.current = true
     }
-  }, [data])
+  }, [todo])
 /*  const changeFilter = (filter: FilterValue, id: string) => {
         setOptimisticTodolists(prev =>
             prev?.map(todo =>
@@ -80,12 +79,12 @@ if(optimisticTodolists ){
             await reorder({ currentId: active.id as string, targetId: over.id as string }).unwrap()
         } catch (error) {
             // В случае ошибки возвращаем предыдущее состояние
-            setOptimisticTodolists(data || [])
+            setOptimisticTodolists(todo || [])
             console.error('Failed to reorder:', error)
         }
 
     },
-    [ optimisticTodolists,reorder,data],
+    [ optimisticTodolists,reorder,todo],
   )
 
   return (
@@ -100,16 +99,7 @@ if(optimisticTodolists ){
           {optimisticTodolists?.map((t) =>
             loading === "loading" ? (
               <Grid container key={t.id}>
-                <Skeleton
-                  variant="rectangular"
-                  width={250}
-                  height={150}
-                  sx={{
-                    mb: 2,
-                    transform: t.id === activeId ? "scale(1.02)" : "scale(1)",
-                    transition: "transform 0.2s ease",
-                  }}
-                />
+                  <TodolistSkeleton/>
               </Grid>
             ) : (
               <Grid container key={t.id}>

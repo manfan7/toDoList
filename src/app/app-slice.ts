@@ -1,5 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit"
 import type { RequestStatus } from "@/common/types"
+import {todolistsApi} from "@/features/todolists/api/todolistsApi.ts";
+import {tasksApi} from "@/features/todolists/api/tasksApi.ts";
 
 export type ThemeMode = "dark" | "light"
 
@@ -30,6 +32,22 @@ export const appSlice = createSlice({
 return action.type.endsWith('pending')
     },(state, _action)=>{
 state.status='loading'
+    })
+    builder.addMatcher((action)=>{
+      if (
+          todolistsApi.endpoints.getToDoList.matchPending(action) ||
+          tasksApi.endpoints.getTasks.matchPending(action)
+      ) {
+        return
+      }
+      return action.type.endsWith('fulfilled')
+    },(state, _action)=>{
+      state.status='succeeded'
+    })
+    builder.addMatcher((action)=>{
+      return action.type.endsWith('rejected')
+    },(state, _action)=>{
+      state.status='failed'
     })
   },
   selectors: {
