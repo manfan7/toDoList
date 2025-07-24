@@ -44,20 +44,18 @@ export const Todolists = () => {
     if (isMounted.current) {
         if(data){
             setOptimisticTodolists(data)
-
         }
-
     } else {
       isMounted.current = true
     }
   }, [data])
-  const changeFilter = (filter: FilterValue, id: string) => {
+/*  const changeFilter = (filter: FilterValue, id: string) => {
         setOptimisticTodolists(prev =>
             prev?.map(todo =>
                 todo.id === id ? { ...todo, filter } : todo
             ) ?? []
         )
-    }
+    }*/
   const handleDragStart = useCallback((event: DragStartEvent) => {
     setActiveId(event.active.id as string)
   }, [])
@@ -127,7 +125,7 @@ if(optimisticTodolists ){
                     },
                   }}
                 >
-                  <ToDoListItem changefilter={changeFilter} toDoList={t} />
+                  <ToDoListItem toDoList={t} />
                 </Paper>
               </Grid>
             ),
@@ -154,7 +152,7 @@ if(optimisticTodolists ){
               transition: "opacity 0.5s ease, transform 0.2s ease backgroundColor 0.4s ease",
             }}
           >
-            <ToDoListItem changefilter={changeFilter} toDoList={optimisticTodolists?.find((t) => t.id === activeId)!} />
+            <ToDoListItem  toDoList={optimisticTodolists?.find((t) => t.id === activeId)!} />
           </Paper>
         ) : null}
       </DragOverlay>

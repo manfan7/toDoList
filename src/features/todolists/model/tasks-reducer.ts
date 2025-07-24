@@ -1,4 +1,4 @@
-import {addtoDoListTC, clearData, removeToDoListTC} from "./toDoList-reducer.ts"
+
 import {createAppSlice} from "@/common/utils"
 import {type tasksListType,} from "@/common/types"
 
@@ -10,19 +10,7 @@ export const tasksSlice = createAppSlice({
 
 
   }),
-  extraReducers: (builder) => {
-    builder.addCase(addtoDoListTC.fulfilled, (state, action) => {
-      if (action.payload) {
-        state[action.payload.id] = []
-      }
-    })
-    builder.addCase(removeToDoListTC.fulfilled, (state, action) => {
-      delete state[action.payload.arg.id]
-    })
-    builder.addCase(clearData, (_state, _action) => {
-      return initialState
-    })
-  },
+
   selectors: {
     selectTasks: (state) => state,
   },

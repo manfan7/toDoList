@@ -3,12 +3,17 @@ import Grid from "@mui/material/Grid"
 import {FullInput} from "@/common/components/CreateItemForm/FullInput.tsx"
 import {Todolists} from "@/features/todolists/ui/ToDoLists/Todolists.tsx"
 import {useCreateToDoListMutation} from "@/features/todolists/api/todolistsApi.ts";
+import {useAppDispatch} from "@/common/hooks/useAppDispatch.ts";
+import {changeLoading} from "@/app/app-slice.ts";
 
 export const Main = () => {
     const [createToDoList]= useCreateToDoListMutation()
-
+const dispatch = useAppDispatch()
   const addToDoList = (value: string) => {
-   createToDoList(value)
+  dispatch(changeLoading({status:'loading'}))
+   createToDoList(value).unwrap().finally(()=>{
+       dispatch(changeLoading({status:'idle'}))
+   })
   }
 
 

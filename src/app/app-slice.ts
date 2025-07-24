@@ -25,6 +25,13 @@ export const appSlice = createSlice({
       state.isLoggedIn=action.payload.isLoggedIn
     })
   }),
+  extraReducers:(builder)=>{
+    builder.addMatcher((action)=>{
+return action.type.endsWith('pending')
+    },(state, _action)=>{
+state.status='loading'
+    })
+  },
   selectors: {
     selectThemeMode: (state) => state.themeMode,
     selectLoadingState: (state) => state.status,
