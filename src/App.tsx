@@ -37,7 +37,7 @@ export const App = () => {
       <CssBaseline />
       <div className={styles.app}>
         <Header />
-          {!isinit && (<div className={styles.circularProgressContainer}>
+          {isLoading && (<div className={styles.circularProgressContainer}>
               <CircularProgress size={150} thickness={3} />
           </div>)}
           {isinit && <Routing />}

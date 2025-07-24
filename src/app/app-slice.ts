@@ -29,17 +29,18 @@ export const appSlice = createSlice({
   }),
   extraReducers:(builder)=>{
     builder.addMatcher((action)=>{
+      if (
+          todolistsApi.endpoints.reorderToDoList.matchPending(action) ||
+          tasksApi.endpoints.getTasks.matchPending(action)
+      ) {
+        return
+      }
 return action.type.endsWith('pending')
     },(state, _action)=>{
 state.status='loading'
     })
     builder.addMatcher((action)=>{
-      if (
-          todolistsApi.endpoints.getToDoList.matchPending(action) ||
-          tasksApi.endpoints.getTasks.matchPending(action)
-      ) {
-        return
-      }
+
       return action.type.endsWith('fulfilled')
     },(state, _action)=>{
       state.status='succeeded'

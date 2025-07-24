@@ -40,6 +40,7 @@ const dispatch = useAppDispatch()
     login(data).then((res)=>{
       if(res.data?.resultCode===ResultCode.Success){
         dispatch(loginTC({isLoggedIn:true}))
+
         localStorage.setItem(AUTH_TOKEN,res.data.data.token)
       }
       reset()

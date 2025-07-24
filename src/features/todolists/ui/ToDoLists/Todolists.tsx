@@ -3,10 +3,8 @@ import Paper from "@mui/material/Paper"
 import {FilterValue} from "@/App.tsx"
 import {useCallback, useEffect, useRef, useState} from "react"
 import {ToDoListItem} from "@/features/todolists/ui/TodolistItem/ToDoListItem.tsx"
-import {useAppSelector} from "@/common/hooks/useAppSelector.ts"
 import {DomainTask} from "@/common/types"
 import {TaskStatus} from "@/common/enum/enum.ts"
-import {selectLoadingState} from "@/app/app-slice.ts"
 import {closestCenter, DndContext, DragEndEvent, DragOverlay, type DragStartEvent} from "@dnd-kit/core"
 import {arrayMove, SortableContext, verticalListSortingStrategy} from "@dnd-kit/sortable"
 import {restrictToWindowEdges} from "@dnd-kit/modifiers"
@@ -24,7 +22,7 @@ export const filterTask = (task: DomainTask[]| undefined, filterVal: FilterValue
 
 export const Todolists = () => {
 
-  const loading = useAppSelector(selectLoadingState)
+  //const loading = useAppSelector(selectLoadingState)
 
   const [activeId, setActiveId] = useState<string | null>(null)
   const isMounted = useRef(false)
@@ -32,9 +30,9 @@ export const Todolists = () => {
   // Первоначальная загрузка данных
 
       // const [trigger,{data }] = useLazyGetToDoListQuery() можно делать lazyloader, выполняется по условию
-    const {data:todo,isLoading,error} = useGetToDoListQuery()
+    const {data:todo,isLoading} = useGetToDoListQuery()
 
-    console.log(todo,isLoading,error)
+
     const [reorder]= useReorderToDoListMutation()
     const [optimisticTodolists, setOptimisticTodolists] = useState(todo)
   // Синхронизация локального состояния с Redux
@@ -48,13 +46,7 @@ export const Todolists = () => {
       isMounted.current = true
     }
   }, [todo])
-/*  const changeFilter = (filter: FilterValue, id: string) => {
-        setOptimisticTodolists(prev =>
-            prev?.map(todo =>
-                todo.id === id ? { ...todo, filter } : todo
-            ) ?? []
-        )
-    }*/
+
   const handleDragStart = useCallback((event: DragStartEvent) => {
     setActiveId(event.active.id as string)
   }, [])
@@ -95,32 +87,35 @@ if(optimisticTodolists ){
       onDragEnd={handleDragEnd}
     >
       <SortableContext items={optimisticTodolists|| []} strategy={verticalListSortingStrategy}>
-        <Grid container spacing={2}>
-          {optimisticTodolists?.map((t) =>
-            loading === "loading" ? (
-              <Grid container key={t.id}>
-                  <TodolistSkeleton/>
-              </Grid>
-            ) : (
-              <Grid container key={t.id}>
-                <Paper
-                  elevation={t.id === activeId ? 12 : 4}
-                  sx={{
-                    p: 2,
-                    transition: "all 0.3s ease",
-                    transform: t.id === activeId ? "scale(1.02)" : "scale(1)",
-                    "&:hover": {
-                      transform: "scale(1.02)",
-                      boxShadow: 6,
-                    },
-                  }}
-                >
-                  <ToDoListItem toDoList={t} />
-                </Paper>
-              </Grid>
-            ),
-          )}
-        </Grid>
+          <Grid container spacing={2}>
+              {isLoading ? (
+                  // Показываем 3-5 заглушек для примера
+                  [...Array(3)].map((_, i) => (
+                      <Grid container key={i}>
+                          <TodolistSkeleton />
+                      </Grid>
+                  ))
+              ) : (
+                  optimisticTodolists?.map((t) => (
+                      <Grid container key={t.id}>
+                          <Paper
+                              elevation={t.id === activeId ? 12 : 4}
+                              sx={{
+                                  p: 2,
+                                  transition: "all 0.3s ease",
+                                  transform: t.id === activeId ? "scale(1.02)" : "scale(1)",
+                                  "&:hover": {
+                                      transform: "scale(1.02)",
+                                      boxShadow: 6,
+                                  },
+                              }}
+                          >
+                              <ToDoListItem toDoList={t} />
+                          </Paper>
+                      </Grid>
+                  ))
+              )}
+          </Grid>
       </SortableContext>
 
       <DragOverlay

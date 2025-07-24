@@ -13,7 +13,6 @@ import {useAppSelector} from "@/common/hooks/useAppSelector.ts"
 import {useAppDispatch} from "@/common/hooks/useAppDispatch.ts"
 import {changeThemeModeAC, loginTC, selectIsLoggedIn, selectThemeMode} from "@/app/app-slice.ts"
 import {LinearProgress} from "@mui/material"
-import {selectLoadingState} from "@/app/app-selectrors.ts"
 import {Link} from "react-router"
 import {Path} from "@/common/routing/Routing.tsx"
 import {useLogoutMutation} from "@/features/auth/api/authapi.ts";
@@ -23,11 +22,12 @@ import {baseApi} from "@/features/todolists/api/baseApi.ts";
 
 export const Header = () => {
     const themeMode = useAppSelector(selectThemeMode)
-    const loading = useAppSelector(selectLoadingState)
+
     const logined = useAppSelector(selectIsLoggedIn)
 
     const dispatch = useAppDispatch()
-    const [logout] = useLogoutMutation()
+    const [logout,{isLoading}] = useLogoutMutation()
+
     const changeMode = () => {
         dispatch(changeThemeModeAC({themeMode: themeMode === "light" ? "dark" : "light"}))
     }
@@ -36,7 +36,6 @@ export const Header = () => {
         logout().then((res) => {
             if (res.data?.resultCode === ResultCode.Success) {
                 dispatch(loginTC({isLoggedIn: false}))
-
                 localStorage.removeItem(AUTH_TOKEN)
 
             }
@@ -89,7 +88,7 @@ export const Header = () => {
                     </Grid>
                 </Container>
             </Toolbar>
-            {loading === "loading" && <LinearProgress color="secondary"/>}
+            {isLoading && <LinearProgress color="secondary"/>}
         </AppBar>
     )
 }

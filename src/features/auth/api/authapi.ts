@@ -1,4 +1,3 @@
-import {instance} from "@/common/instance/instance.ts"
 import type {LoginInputs} from "@/features/auth/lib/shemas"
 import {AuthResponseType, authRresponse, DefaultResponse} from "@/common/types"
 import {baseApi} from "@/features/todolists/api/baseApi.ts";
@@ -31,14 +30,3 @@ export const authApi = baseApi.injectEndpoints({
 
 
 export const {useAuthMeQuery,useLogoutMutation,useLoginMutation}= authApi
-export const _authApi = {
-    login: function (args: LoginInputs) {
-        return instance.post<AuthResponseType>(`/auth/login`, args)
-    },
-    logout() {
-        return instance.delete<DefaultResponse>(`/auth/login`)
-    },
-    authMe() {
-        return instance.get<authRresponse>(`/auth/me`)
-    },
-}
