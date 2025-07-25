@@ -2,6 +2,8 @@ import { ChangeEvent, useState, KeyboardEvent } from "react"
 import { Grid, TextField } from "@mui/material"
 import IconButton from "@mui/material/IconButton"
 import AddAlarmOutlinedIcon from "@mui/icons-material/AddAlarmOutlined"
+import {useAppSelector} from "@/common/hooks/useAppSelector.ts";
+import {selectThemeMode} from "@/app/app-slice.ts";
 
 type FullInput = {
   addTask: (value: string) => void
@@ -11,6 +13,8 @@ type FullInput = {
 export const FullInput = ({ addTask, addTaskTitle, disabled = false }: FullInput) => {
   const [inputValue, setInputValue] = useState("")
   const [error, setError] = useState<string | null>(null)
+  const theme = useAppSelector(selectThemeMode)
+
   const changeHandler = (e: ChangeEvent<HTMLInputElement>) => {
     e.stopPropagation()
     setInputValue(e.currentTarget.value)
@@ -44,7 +48,7 @@ export const FullInput = ({ addTask, addTaskTitle, disabled = false }: FullInput
             fontFamily: "Arial", // Шрифт
             fontWeight: 600, // Жирность
             fontStyle: "italic", // Курсив
-
+            color: theme === "light" ? "darkorange" : "white",
           },
         }}
         value={inputValue}

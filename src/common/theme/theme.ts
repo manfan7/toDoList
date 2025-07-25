@@ -14,7 +14,7 @@ export const getTheme = (themeMode: ThemeMode) => {
         styleOverrides: {
           root: {
             "& .MuiInputBase-input": {
-              color: themeMode === "light" ? "white" : "white",
+              color: themeMode === "light" ? "black" : "white",
               backgroundColor: "transparent", // Цвет текста
             },
             "& .MuiInputLabel-root": {
