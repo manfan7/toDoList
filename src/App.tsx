@@ -1,5 +1,5 @@
 import {ThemeProvider} from "@mui/material/styles"
-import {CircularProgress, CssBaseline} from "@mui/material"
+import {CssBaseline} from "@mui/material"
 import {useAppSelector} from "@/common/hooks/useAppSelector.ts"
 import {selectThemeMode} from "@/app/app-selectrors.ts"
 import {getTheme} from "@/common/theme/theme.ts"
@@ -38,7 +38,7 @@ export const App = () => {
       <div className={styles.app}>
         <Header />
           {isLoading && (<div className={styles.circularProgressContainer}>
-              <CircularProgress size={150} thickness={3} />
+              Wait please.....
           </div>)}
           {isinit && <Routing />}
 

@@ -1,5 +1,5 @@
 import { createTheme } from "@mui/material/styles"
-import { ThemeMode } from "../../app/app-slice.ts"
+import { ThemeMode } from "@/app/app-slice.ts"
 
 export const getTheme = (themeMode: ThemeMode) => {
   return createTheme({
@@ -14,7 +14,7 @@ export const getTheme = (themeMode: ThemeMode) => {
         styleOverrides: {
           root: {
             "& .MuiInputBase-input": {
-              color: themeMode === "light" ? "black" : "white",
+              color: themeMode === "light" ? "white" : "white",
               backgroundColor: "transparent", // Цвет текста
             },
             "& .MuiInputLabel-root": {
@@ -23,7 +23,7 @@ export const getTheme = (themeMode: ThemeMode) => {
             },
             input: {
               fontSize: "16px",
-              color: themeMode === "light" ? "black" : "white",
+              color: themeMode === "light" ? "white" : "white",
             },
           },
         },

@@ -11,7 +11,7 @@ import AppBar from "@mui/material/AppBar"
 import {useAppSelector} from "@/common/hooks/useAppSelector.ts"
 
 import {useAppDispatch} from "@/common/hooks/useAppDispatch.ts"
-import {changeThemeModeAC, loginTC, selectIsLoggedIn, selectThemeMode} from "@/app/app-slice.ts"
+import {changeThemeModeAC, loginTC, selectIsLoggedIn, selectLoadingState, selectThemeMode} from "@/app/app-slice.ts"
 import {LinearProgress} from "@mui/material"
 import {Link} from "react-router"
 import {Path} from "@/common/routing/Routing.tsx"
@@ -22,7 +22,7 @@ import {baseApi} from "@/features/todolists/api/baseApi.ts";
 
 export const Header = () => {
     const themeMode = useAppSelector(selectThemeMode)
-
+const loading = useAppSelector(selectLoadingState)
     const logined = useAppSelector(selectIsLoggedIn)
 
     const dispatch = useAppDispatch()
@@ -88,7 +88,7 @@ export const Header = () => {
                     </Grid>
                 </Container>
             </Toolbar>
-            {isLoading && <LinearProgress color="secondary"/>}
+            {(isLoading || loading==='loading') && <LinearProgress color="secondary"/>}
         </AppBar>
     )
 }

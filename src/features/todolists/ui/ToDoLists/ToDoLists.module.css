@@ -6,6 +6,7 @@
 .container {
     width: 305px;
     padding: 10px 20px;
+    background-color: transparent;
 }
 
 .title {
