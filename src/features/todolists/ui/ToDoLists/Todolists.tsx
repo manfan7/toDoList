@@ -30,7 +30,10 @@ export const Todolists = () => {
   // Первоначальная загрузка данных
 
       // const [trigger,{data }] = useLazyGetToDoListQuery() можно делать lazyloader, выполняется по условию
-    const {data:todo,isLoading} = useGetToDoListQuery()
+    const {data:todo,isLoading} = useGetToDoListQuery(undefined,{
+        pollingInterval: 100000,
+        skipPollingIfUnfocused: true,
+    })
 
 
     const [reorder]= useReorderToDoListMutation()
