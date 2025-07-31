@@ -43,6 +43,34 @@ export const tasksApi = baseApi.injectEndpoints({
             invalidatesTags: (_res, _err, { id }) => [{ type: "Tasks", id: id }],
         }),
         updateTask:build.mutation<TaskOperationResponse,{id: string, taskId: string, model: Partial<UpdateTaskModel>}>({
+            async onQueryStarted({ id, taskId, model }, {dispatch, queryFulfilled,getState}) {
+                const args = tasksApi.util.selectCachedArgsForQuery(getState(),'getTasks')
+
+                let patchResults: any[] = []
+                args.forEach(({ params }) => {
+                    patchResults.push(
+                        dispatch(
+                            tasksApi.util.updateQueryData(
+                                'getTasks',
+                                { toDoid:id, params: { page: params?.page||1 } },
+                                state => {
+                                    const index = state.items.findIndex(task => task.id === taskId)
+                                    if (index !== -1) {
+                                        state.items[index] = { ...state.items[index], ...model }
+                                    }
+                                }
+                            )
+                        )
+                    )
+                })
+                try {
+                    await queryFulfilled
+                } catch {
+                    patchResults.forEach(patchResult => {
+                        patchResult.undo()
+                    })
+                }
+            },
             query:({id,taskId,model})=>{
                 return {
                     method:'put',
