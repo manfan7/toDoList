@@ -7,6 +7,7 @@ import type {DomainTask, RequestStatus} from "@/common/types"
 import {useGetTasksQuery} from "@/features/todolists/api/tasksApi.ts";
 import {useState} from "react";
 import {TasksPagination} from "@/features/todolists/ui/TodolistItem/Tasks/TasksPagination/TaskPagination.tsx";
+import {PAGE_COUNT} from "@/common/constants";
 
 type Tasks = {
   filter: FilterValue
@@ -18,7 +19,7 @@ export const Tasks = ({ filter, id, entityStatus }: Tasks) => {
   const {data} = useGetTasksQuery({toDoid:id,params:{page}})
 
   let tasksForToDoList = filterTask(data?.items, filter)
-
+const isPaginatition = data && data.totalCount>PAGE_COUNT
   return (
     <>
       {tasksForToDoList?.length === 0 ? (
@@ -34,7 +35,7 @@ export const Tasks = ({ filter, id, entityStatus }: Tasks) => {
                 return <TaskItem key={task.id} task={task} id={id} entityStatus={entityStatus} />
               })}
             </List>
-            <TasksPagination totalCount={data?.totalCount || 0} page={page} setPage={setPage} />
+            {isPaginatition && <TasksPagination totalCount={data?.totalCount || 0} page={page} setPage={setPage} />}
           </>
 
       )}
