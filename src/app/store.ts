@@ -3,6 +3,7 @@ import {appSlice, AppSlice} from "@/app/app-slice.ts"
 import {todolistsApi} from "@/features/todolists/api/todolistsApi.ts";
 import {setupListeners} from "@reduxjs/toolkit/query";
 import {baseApi} from "@/features/todolists/api/baseApi.ts";
+import {captchaApi} from "@/features/auth/api/authapi.ts";
 
 // объединение reducer'ов с помощью combineReducers
 //const rootReducer = combineReducers()
@@ -10,12 +11,12 @@ import {baseApi} from "@/features/todolists/api/baseApi.ts";
 // создание store
 export const store = configureStore({
     reducer: {
-
+       [captchaApi.reducerPath]:captchaApi.reducer,
         [appSlice.name]: AppSlice,
         [baseApi.reducerPath]: baseApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware().concat(todolistsApi.middleware),
+        getDefaultMiddleware().concat(todolistsApi.middleware).concat(captchaApi.middleware)
 })
 setupListeners(store.dispatch)
 // автоматическое определение типа всего объекта состояния

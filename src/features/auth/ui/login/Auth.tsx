@@ -12,8 +12,8 @@ import {zodResolver} from "@hookform/resolvers/zod"
 import {useAppSelector} from "@/common/hooks/useAppSelector.ts"
 import {Navigate} from "react-router"
 import {Path} from "@/common/routing/Routing.tsx"
-import {loginTC, selectIsLoggedIn} from "@/app/app-slice.ts";
-import {useLoginMutation} from "@/features/auth/api/authapi.ts";
+import {errorHandler, loginTC, selectIsLoggedIn} from "@/app/app-slice.ts";
+import {useGetCaptchaQuery, useLoginMutation} from "@/features/auth/api/authapi.ts";
 import {ResultCode} from "@/common/enum/enum.ts";
 import {useAppDispatch} from "@/common/hooks/useAppDispatch.ts";
 import {AUTH_TOKEN} from "@/common/constants";
@@ -24,6 +24,7 @@ export const Login = () => {
 const dispatch = useAppDispatch()
   const logined = useAppSelector(selectIsLoggedIn)
   const [login] = useLoginMutation()
+const {data} = useGetCaptchaQuery()
 
   const {
     register,
@@ -37,9 +38,12 @@ const dispatch = useAppDispatch()
     resolver: zodResolver(loginSchema),
   })
   const onSubmit: SubmitHandler<LoginInputs> = (data) => {
-    login(data).then((res)=>{
+  debugger
+  login(data).then((res)=>{
+      debugger
       if(res.data?.resultCode===ResultCode.Success){
         dispatch(loginTC({isLoggedIn:true}))
+        dispatch(errorHandler({error:null}))
         localStorage.setItem(AUTH_TOKEN,res.data.data.token)
       }
       reset()
@@ -53,7 +57,8 @@ const dispatch = useAppDispatch()
   }
 
   return (
-    <Grid container justifyContent={"center"}>
+    <Grid container justifyContent={"center"} spacing={10}>
+
       <FormControl>
         <FormLabel color={"secondary"}>
           <Typography variant="caption" gutterBottom sx={{ display: "block", color: "white" }}>
@@ -80,7 +85,9 @@ const dispatch = useAppDispatch()
               {...register("email")}
             />
             {errors.email && <span className={styles.errorMessage}>{errors.email.message}</span>}
-            <TextField type="password" label="Password" margin="normal" {...register("password")} />
+            <TextField sx={{
+              color: "secondary",
+            }} type="password" label="Password" margin="normal" {...register("password")} />
             {errors.password && <span className={styles.errorMessage}>{errors.password.message}</span>}
             <FormControlLabel
               sx={{
@@ -97,13 +104,19 @@ const dispatch = useAppDispatch()
               }
               label={"Remeber me"}
             />
-
+            <Grid container justifyContent={"center"} direction={'column'}>
+              <Grid sx={{ marginTop: 2 }}> {/* 2 = 16px */}
+                <img src={data?.url} alt="captcha" style={{ width: "100%" }} />
+              </Grid>
+              <TextField required label="Type captcha" variant="standard" {...register('captcha')} />
+            </Grid>
             <Button type="submit" variant="contained" color="primary">
               Login
             </Button>
           </FormGroup>
         </form>
       </FormControl>
+
     </Grid>
   )
 }

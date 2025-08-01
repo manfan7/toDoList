@@ -12,6 +12,7 @@ export const appSlice = createSlice({
     status: "idle" as RequestStatus,
     error: null as null | string,
     isLoggedIn: false,
+    captchaUrl:null as null|string
   },
   reducers: (create) => ({
     changeThemeModeAC: create.reducer<{ themeMode: ThemeMode }>((state, action) => {
@@ -25,6 +26,9 @@ export const appSlice = createSlice({
     }),
     loginTC: create.reducer<{isLoggedIn:boolean}>((state, action)=>{
       state.isLoggedIn=action.payload.isLoggedIn
+    }),
+    captchaTC:create.reducer<{captcha:null|string}>((state, action)=>{
+      state.captchaUrl = action.payload.captcha
     })
   }),
   extraReducers:(builder)=>{
@@ -56,9 +60,10 @@ state.status='loading'
     selectLoadingState: (state) => state.status,
     selectError: (state) => state.error,
     selectIsLoggedIn: (state) => state.isLoggedIn,
+    selectCaptcha:(state)=>state.captchaUrl
   },
 })
 
 export const AppSlice = appSlice.reducer
 export const { changeThemeModeAC, changeLoading, errorHandler,loginTC } = appSlice.actions
-export const { selectThemeMode, selectLoadingState, selectError,selectIsLoggedIn } = appSlice.selectors
+export const { selectThemeMode, selectLoadingState, selectError,selectIsLoggedIn,selectCaptcha } = appSlice.selectors
