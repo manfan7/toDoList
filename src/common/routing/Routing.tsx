@@ -11,7 +11,7 @@ import {selectIsLoggedIn} from "@/app/app-slice.ts";
 export const Path = {
   Main: "/",
   Login: "login",
-  page404: "*",
+  page404: "/*",
   Faq: "/Faq",
 } as const
 

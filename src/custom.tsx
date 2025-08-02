@@ -1,3 +1,4 @@
+/*
 import { useEffect, useState } from "react"
 
 type Test = {
@@ -20,7 +21,7 @@ type N<T> = {
 }
 type R<T> = {
   [K in keyof T]?: T[K]
-}
+}type
 
 type My = N<Test>
 
@@ -67,3 +68,4 @@ const Child = ({ a }: any) => {
     </>
   )
 }
+*/
