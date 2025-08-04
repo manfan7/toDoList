@@ -7,6 +7,7 @@ import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 export const authApi = baseApi.injectEndpoints({
     endpoints: (build) => ({
         login: build.mutation<AuthResponseType, LoginInputs>({
+
             query: (args) => ({
                 url: `/auth/login`,
                 method: 'POST',
@@ -34,6 +35,14 @@ export const captchaApi = createApi({
         getCaptcha: build.query<{url:string}, void>({
             query: () => `/security/get-captcha-url`,
         }),
+        login: build.mutation<AuthResponseType, LoginInputs>({
+
+            query: (args) => ({
+                url: `/auth/login`,
+                method: 'POST',
+                body: args
+            }),
+        }),
     }),
 })
 
@@ -42,5 +51,5 @@ export const captchaApi = createApi({
 
 
 
-export const {useAuthMeQuery,useLogoutMutation,useLoginMutation}= authApi
-export const {useGetCaptchaQuery} = captchaApi
+export const {useAuthMeQuery,useLogoutMutation}= authApi
+export const {useGetCaptchaQuery,useLoginMutation} = captchaApi

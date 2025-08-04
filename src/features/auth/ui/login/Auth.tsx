@@ -12,7 +12,7 @@ import {zodResolver} from "@hookform/resolvers/zod"
 import {useAppSelector} from "@/common/hooks/useAppSelector.ts"
 import {Navigate} from "react-router"
 import {Path} from "@/common/routing/Routing.tsx"
-import {errorHandler, loginTC, selectIsLoggedIn} from "@/app/app-slice.ts";
+import {errorHandler, loginTC, selectCaptcha, selectIsLoggedIn} from "@/app/app-slice.ts";
 import {useGetCaptchaQuery, useLoginMutation} from "@/features/auth/api/authapi.ts";
 import {ResultCode} from "@/common/enum/enum.ts";
 import {useAppDispatch} from "@/common/hooks/useAppDispatch.ts";
@@ -24,8 +24,9 @@ export const Login = () => {
 const dispatch = useAppDispatch()
   const logined = useAppSelector(selectIsLoggedIn)
   const [login] = useLoginMutation()
-const {data} = useGetCaptchaQuery()
+ const {data} = useGetCaptchaQuery()
 
+const captcha = useAppSelector(selectCaptcha)
   const {
     register,
     handleSubmit,
@@ -37,20 +38,25 @@ const {data} = useGetCaptchaQuery()
 
     resolver: zodResolver(loginSchema),
   })
-  const onSubmit: SubmitHandler<LoginInputs> = (data) => {
-  debugger
-  login(data).then((res)=>{
-      debugger
-      if(res.data?.resultCode===ResultCode.Success){
-        dispatch(loginTC({isLoggedIn:true}))
-        dispatch(errorHandler({error:null}))
-        localStorage.setItem(AUTH_TOKEN,res.data.data.token)
-      }
-      reset()
-    }).catch((errors)=>{
-      console.log(errors)
-      reset({password:''});
-    })
+  const onSubmit: SubmitHandler<LoginInputs> =async (data) => {
+try {
+  const res = await login(data).unwrap()
+  console.log(res)
+  if(res?.resultCode===ResultCode.Success){
+
+    dispatch(loginTC({isLoggedIn:true}))
+    dispatch(errorHandler({error:null}))
+    localStorage.setItem(AUTH_TOKEN,res.data.token)
+    reset()
+  }
+
+}
+catch (errors) {
+
+  console.log(errors)
+  reset({password:''});
+}
+
   }
   if (logined) {
     return <Navigate to={Path.Main} />
@@ -104,12 +110,13 @@ const {data} = useGetCaptchaQuery()
               }
               label={"Remeber me"}
             />
-            <Grid container justifyContent={"center"} direction={'column'}>
+            {!!captcha&&  <Grid container justifyContent={"center"} direction={'column'}>
               <Grid sx={{ marginTop: 2 }}> {/* 2 = 16px */}
                 <img src={data?.url} alt="captcha" style={{ width: "100%" }} />
               </Grid>
               <TextField required label="Type captcha" variant="standard" {...register('captcha')} />
-            </Grid>
+            </Grid>}
+
             <Button type="submit" variant="contained" color="primary">
               Login
             </Button>

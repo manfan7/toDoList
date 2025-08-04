@@ -27,7 +27,7 @@ export const Routing = () => {
         <Route path={Path.Login} element={<Login />} />
       </Route>
 
-      <Route path={Path.page404} element={<Page404 />} />
+    <Route path={Path.page404} element={<Page404 />} />
     </Routes>
   )
 }

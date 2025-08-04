@@ -11,9 +11,10 @@ import {captchaApi} from "@/features/auth/api/authapi.ts";
 // создание store
 export const store = configureStore({
     reducer: {
-       [captchaApi.reducerPath]:captchaApi.reducer,
+
         [appSlice.name]: AppSlice,
         [baseApi.reducerPath]: baseApi.reducer,
+        [captchaApi.reducerPath]:captchaApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware().concat(todolistsApi.middleware).concat(captchaApi.middleware)
