@@ -99,7 +99,7 @@ if(optimisticTodolists ){
                       </Grid>
                   ))
               ) : (
-                  optimisticTodolists?.map((t) => (
+                  todo?.map((t) => (
                       <Grid container key={t.id}>
                           <Paper
                               elevation={t.id === activeId ? 12 : 4}
@@ -140,7 +140,7 @@ if(optimisticTodolists ){
               transition: "opacity 0.5s ease, transform 0.2s ease backgroundColor 0.4s ease",
             }}
           >
-            <ToDoListItem  toDoList={optimisticTodolists?.find((t) => t.id === activeId)!} />
+            <ToDoListItem  toDoList={todo?.find((t) => t.id === activeId)!} />
           </Paper>
         ) : null}
       </DragOverlay>
