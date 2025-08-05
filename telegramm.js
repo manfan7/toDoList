@@ -2,20 +2,25 @@ import TelegramBot from 'node-telegram-bot-api';
 import axios from 'axios';
 import { createRequire } from 'module'; // Для других CommonJS-модулей
 const require = createRequire(import.meta.url);
+import dotenv from 'dotenv';
+dotenv.config();
 // replace the value below with the Telegram token you receive from @BotFather
 const token = '8430257483:AAGci1xeYW8lx8hhrp8S8xyf3euro_SUnqk'
 
 
 const API = axios.create({
     baseURL: 'https://social-network.samuraijs.com/api/1.1',
-    withCredentials: true, // Замени на URL твоего backend
+    withCredentials: true,
 });
+
 API.interceptors.request.use((config) => {
-    const token = localStorage.getItem('authToken'); // или переменная AUTH_TOKEN, если импортируешь
     config.headers.set('API-KEY', process.env.VITE_API_KEY);
+
+    const token = process.env.BOT_AUTH_TOKEN;
     if (token) {
         config.headers.set('Authorization', `Bearer ${token}`);
     }
+
     return config;
 });
 export const getTodoLists = async () => {
