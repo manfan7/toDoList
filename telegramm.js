@@ -1,7 +1,7 @@
 import TelegramBot from 'node-telegram-bot-api';
 import axios from 'axios';
-import { createRequire } from 'module'; // Для других CommonJS-модулей
-const require = createRequire(import.meta.url);
+/*import { createRequire } from 'module'; // Для других CommonJS-модулей
+const require = createRequire(import.meta.url);*/
 import dotenv from 'dotenv';
 dotenv.config();
 // replace the value below with the Telegram token you receive from @BotFather
@@ -16,7 +16,7 @@ const API = axios.create({
 API.interceptors.request.use((config) => {
     config.headers.set('API-KEY', process.env.VITE_API_KEY);
 
-    const token = process.env.BOT_AUTH_TOKEN;
+    const token = process.env.AUTH_TOKEN;
     if (token) {
         config.headers.set('Authorization', `Bearer ${token}`);
     }
