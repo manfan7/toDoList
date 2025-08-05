@@ -5,7 +5,7 @@ const require = createRequire(import.meta.url);
 import dotenv from 'dotenv';
 dotenv.config();
 // replace the value below with the Telegram token you receive from @BotFather
-const token = '8430257483:AAGci1xeYW8lx8hhrp8S8xyf3euro_SUnqk'
+const token = '8430257483:AAFMy3cPZNIZnp2WGzzM-wXbkZnQnPR5Jes'
 
 
 const API = axios.create({
