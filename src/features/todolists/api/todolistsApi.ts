@@ -62,6 +62,7 @@ export const todolistsApi = baseApi.injectEndpoints({
         }),
         reorderToDoList: builder.mutation<BaseResponseZod, { targetId: string, currentId: string }>({
             async onQueryStarted({targetId,currentId}, {dispatch, queryFulfilled}) {
+
                 const patchResult = dispatch(
                     todolistsApi.util.updateQueryData('getToDoList', undefined, state => {
                             const oldIndex = state?.findIndex((item) => item.id === targetId)
@@ -70,6 +71,7 @@ export const todolistsApi = baseApi.injectEndpoints({
 
                             if(oldIndex!==-1&& newIndex!==-1 ) {
                                return arrayMove(state, oldIndex, newIndex)
+
                             }
 
                                /* const todolistIndex = state.findIndex(todolist => todolist.id === id)
