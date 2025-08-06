@@ -74,6 +74,9 @@ importers:
       uuid:
         specifier: ^11.1.0
         version: 11.1.0
+      ws:
+        specifier: ^8.18.3
+        version: 8.18.3
       zod:
         specifier: ^3.25.71
         version: 3.25.71
@@ -3454,8 +3457,8 @@ packages:
   wrappy@1.0.2:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}
 
-  ws@8.18.1:
-    resolution: {integrity: sha512-RKW2aJZMXeMxVpnZ6bck+RswznaxmzdULiBr6KY7XkTnW8uvt0iT9H5DkHUChXrc+uurzwa0rVI16n/Xzjdz1w==}
+  ws@8.18.3:
+    resolution: {integrity: sha512-PEIGCY5tSlUt50cqyMXfCzX+oOPqN0vuGqWzbcJ2xvnkzkq46oOpz7dQaTDBdfICb4N14+GARUDw2XV2N4tvzg==}
     engines: {node: '>=10.0.0'}
     peerDependencies:
       bufferutil: ^4.0.1
@@ -4352,7 +4355,7 @@ snapshots:
       recast: 0.23.11
       semver: 7.7.1
       util: 0.12.5
-      ws: 8.18.1
+      ws: 8.18.3
     optionalDependencies:
       prettier: 3.5.3
     transitivePeerDependencies:
@@ -4694,7 +4697,7 @@ snapshots:
       sirv: 3.0.1
       tinyrainbow: 1.2.0
       vitest: 2.1.8(@types/node@22.15.18)(@vitest/browser@2.1.8)(msw@2.7.4(@types/node@22.15.18)(typescript@5.7.2))
-      ws: 8.18.1
+      ws: 8.18.3
     optionalDependencies:
       playwright: 1.51.1
     transitivePeerDependencies:
@@ -6984,7 +6987,7 @@ snapshots:
 
   wrappy@1.0.2: {}
 
-  ws@8.18.1: {}
+  ws@8.18.3: {}
 
   y18n@5.0.8: {}
 

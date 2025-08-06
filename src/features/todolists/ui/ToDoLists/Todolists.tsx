@@ -31,7 +31,7 @@ export const Todolists = () => {
 
       // const [trigger,{data }] = useLazyGetToDoListQuery() можно делать lazyloader, выполняется по условию
     const {data:todo,isLoading} = useGetToDoListQuery(undefined,{
-        pollingInterval: 100000,
+        //pollingInterval: 10,
         skipPollingIfUnfocused: true,
     })
 

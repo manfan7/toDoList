@@ -4,9 +4,23 @@ import { createRequire } from 'module'; // Для других CommonJS-моду
 const require = createRequire(import.meta.url);
 import dotenv from 'dotenv';
 dotenv.config();
+const WebSocket = require('ws');
+const wss = new WebSocket.Server({ port: 8080,
+    verifyClient: (info, callback) => {
+        // Разрешаем все подключения (для разработки)
+        callback(true);
+    }
+});
 // replace the value below with the Telegram token you receive from @BotFather
-const token = '8430257483:AAFMy3cPZNIZnp2WGzzM-wXbkZnQnPR5Jes'
 
+const token = process.env.TELEGRAMM_BOT
+wss.on('connection', (ws) => {
+    console.log('Новое подключение к WebSocket');
+
+    ws.on('error', (error) => {
+        console.error('WebSocket error:', error);
+    });
+});
 
 const API = axios.create({
     baseURL: 'https://social-network.samuraijs.com/api/1.1',
@@ -30,6 +44,17 @@ export const getTodoLists = async () => {
 
 export const createTodoList = async (title) => {
     const res = await API.post('/todo-lists', { title });
+
+    const message = {
+        type:'TODO_ADDED',
+                 todo:  res.data.data.item,
+    };
+    wss.clients.forEach(client => {
+        if (client.readyState === WebSocket.OPEN) {
+            console.log('Sending:', message); // Логируем перед отправкой
+            client.send(JSON.stringify(message));
+        }
+    });
     return res.data;
 };
 
@@ -75,7 +100,8 @@ bot.on('message', async (msg) => {
     if (state === 'awaiting_todolist_title') {
         const title = msg.text;
         try {
-            await createTodoList(title);
+           await createTodoList(title);
+
             bot.sendMessage(chatId, `Создан список: ${title}`);
         } catch (e) {
             bot.sendMessage(chatId, 'Ошибка при создании.');
