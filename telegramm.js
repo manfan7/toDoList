@@ -12,14 +12,27 @@ const wss = new WebSocket.Server({ port: 8080,
     }
 });
 // replace the value below with the Telegram token you receive from @BotFather
-
+let userAuthToken = null;
 const token = process.env.TELEGRAMM_BOT
 wss.on('connection', (ws) => {
     console.log('Новое подключение к WebSocket');
+    ws.on('message', (message) => {
+        try {
+            const data = JSON.parse(message);
 
+            if (data.type === 'AUTH' && data.token) {
+                // Сохраняем токен для этого клиента
+               userAuthToken = data.token;
+                console.log('Клиент авторизован с токеном:', data.token);
+            }
+        } catch (error) {
+            console.error('Ошибка обработки сообщения:', error);
+        }
+    });
     ws.on('error', (error) => {
         console.error('WebSocket error:', error);
     });
+
 });
 
 const API = axios.create({
@@ -30,7 +43,7 @@ const API = axios.create({
 API.interceptors.request.use((config) => {
     config.headers.set('API-KEY', process.env.VITE_API_KEY);
 
-    const token = process.env.BOT_AUTH_TOKEN;
+    const token = userAuthToken||process.env.BOT_AUTH_TOKEN;
     if (token) {
         config.headers.set('Authorization', `Bearer ${token}`);
     }

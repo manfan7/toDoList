@@ -41,12 +41,21 @@ const captcha = useAppSelector(selectCaptcha)
   const onSubmit: SubmitHandler<LoginInputs> =async (data) => {
 try {
   const res = await login(data).unwrap()
-  console.log(res)
+
   if(res?.resultCode===ResultCode.Success){
 
     dispatch(loginTC({isLoggedIn:true}))
     dispatch(errorHandler({error:null}))
     localStorage.setItem(AUTH_TOKEN,res.data.token)
+    const ws = new WebSocket('ws://localhost:8080');
+    ws.onopen = () => {
+      // Отправляем токен при подключении
+      ws.send(JSON.stringify({
+        type: 'AUTH',
+        token: res.data.token
+      }));
+      console.log('WebSocket connected and token sent');
+    };
     reset()
   }
 
