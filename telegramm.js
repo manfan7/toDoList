@@ -81,14 +81,28 @@ const bot = new TelegramBot(token, {polling: true});
 // messages.
 const userStates = new Map(); // Храним промежуточные состояния для создания
 
+const mainKeyboard = {
+    reply_markup: {
+        keyboard: [
+            [{ text: "📝 Показать списки" }],
+            [{ text: "➕ Создать список" }]
+        ],
+        resize_keyboard: true,
+        one_time_keyboard: false
+    }
+};
+
 bot.onText(/\/start/, (msg) => {
-    bot.sendMessage(msg.chat.id, `Привет, ${msg.from.first_name}!
-Вот, что я умею:
-/todolists — показать списки
-/newtodolist — создать список`);
+    bot.sendMessage(
+        msg.chat.id,
+        `Привет, ${msg.from.first_name}! Выбери действие:`,
+        mainKeyboard
+    );
 });
 
-bot.onText(/\/todolists/, async (msg) => {
+
+
+/*bot.onText(/\/todolists/, async (msg) => {
     try {
         const lists = await getTodoLists();
         if (!lists.length) return bot.sendMessage(msg.chat.id, 'Пока нет списков.');
@@ -104,22 +118,55 @@ bot.onText(/\/newtodolist/, (msg) => {
     const chatId = msg.chat.id;
     bot.sendMessage(chatId, 'Введите название нового списка:');
     userStates.set(chatId, 'awaiting_todolist_title');
-});
+});*/
 
 bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
+    const text = msg.text;
     const state = userStates.get(chatId);
 
-    if (state === 'awaiting_todolist_title') {
-        const title = msg.text;
-        try {
-           await createTodoList(title);
-
-            bot.sendMessage(chatId, `Создан список: ${title}`);
-        } catch (e) {
-            bot.sendMessage(chatId, 'Ошибка при создании.');
-        } finally {
+    // Обработка обычных команд
+    if (!state) {
+        if (text === '📝 Показать списки') {
+            try {
+                const lists = await getTodoLists();
+                if (!lists.length) {
+                    return bot.sendMessage(chatId, 'Пока нет списков.', mainKeyboard);
+                }
+                const formatted = lists.map((l, i) => `${i + 1}. ${l.title}`).join('\n');
+                bot.sendMessage(chatId, `Списки:\n${formatted}`, mainKeyboard);
+            } catch (e) {
+                console.error(e);
+                bot.sendMessage(chatId, 'Ошибка при получении списка.', mainKeyboard);
+            }
+        }
+        else if (text === '➕ Создать список') {
+            // Запрашиваем название с клавиатурой отмены
+            bot.sendMessage(chatId, 'Введите название нового списка:', {
+                reply_markup: {
+                    keyboard: [[{ text: "❌ Отмена" }]],
+                    resize_keyboard: true,
+                    one_time_keyboard: true
+                }
+            });
+            userStates.set(chatId, 'awaiting_todolist_title');
+        }
+    }
+    // Обработка состояния "ожидание названия списка"
+    else if (state === 'awaiting_todolist_title') {
+        if (text === '❌ Отмена') {
+            bot.sendMessage(chatId, 'Создание списка отменено.', mainKeyboard);
             userStates.delete(chatId);
+        } else {
+            try {
+                await createTodoList(text);
+                bot.sendMessage(chatId, `Список "${text}" успешно создан!`, mainKeyboard);
+            } catch (e) {
+                console.error(e);
+                bot.sendMessage(chatId, 'Ошибка при создании списка.', mainKeyboard);
+            } finally {
+                userStates.delete(chatId);
+            }
         }
     }
 });
