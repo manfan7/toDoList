@@ -17,6 +17,7 @@ import {useGetCaptchaQuery, useLoginMutation} from "@/features/auth/api/authapi.
 import {ResultCode} from "@/common/enum/enum.ts";
 import {useAppDispatch} from "@/common/hooks/useAppDispatch.ts";
 import {AUTH_TOKEN} from "@/common/constants";
+import {useEffect} from "react";
 
 export const Login = () => {
   //const themeMode = useAppSelector(selectThemeMode)
@@ -25,13 +26,19 @@ export const Login = () => {
 const dispatch = useAppDispatch()
   const logined = useAppSelector(selectIsLoggedIn)
   const [login,{data:loginData}] = useLoginMutation()
-  const {data} = useGetCaptchaQuery()
+
+  const { data: captchaData, refetch: refetchCaptcha } = useGetCaptchaQuery();
 const captcha = useAppSelector(selectCaptcha)
 
-if(loginData?.resultCode===ResultCode.CaptchaError){
-dispatch(captchaTC({captcha:true}))
-
-}
+  // Обработка изменения loginData
+  useEffect(() => {
+    if (loginData?.resultCode === ResultCode.CaptchaError) {
+      dispatch(captchaTC({ captcha: true }));
+      refetchCaptcha();
+    } else if (loginData?.resultCode === ResultCode.Success) {
+      dispatch(captchaTC({ captcha: false }));
+    }
+  }, [loginData, dispatch, refetchCaptcha]);
 
   const {
     register,
@@ -47,7 +54,6 @@ dispatch(captchaTC({captcha:true}))
   const onSubmit: SubmitHandler<LoginInputs> =async (data) => {
 try {
   const res = await login(data).unwrap()
-
   if(res?.resultCode===ResultCode.Success){
     dispatch(captchaTC({captcha: false}))
     dispatch(loginTC({isLoggedIn:true}))
@@ -67,7 +73,6 @@ try {
 
 }
 catch (errors) {
-
   console.log(errors)
   reset({password:''});
 }
@@ -128,9 +133,9 @@ catch (errors) {
             />
             {captcha&&  <Grid container justifyContent={"center"} direction={'column'}>
               <Grid sx={{ marginTop: 2 }}> {/* 2 = 16px */}
-                <img src={data?.url} alt="captcha" style={{ width: "100%" }} />
+                <img src={captchaData?.url} alt="captcha" style={{ width: "100%" }} />
               </Grid>
-              <TextField required label="Type captcha" variant="standard" {...register('captcha')} />
+              <TextField required label="Type captcha" variant="standard" {...register('captcha')}  error={!!errors.captcha}/>
             </Grid>}
 
             <Button type="submit" variant="contained" color="primary">

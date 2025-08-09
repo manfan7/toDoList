@@ -14,12 +14,7 @@ export const authApi = baseApi.injectEndpoints({
                 body: args
             }),
         }),
-        authMe: build.query<authRresponse, void>({
-            query: () => ({
-                url: `/auth/me`,
-                method: 'get'
-            })
-        }),
+
         logout: build.mutation<DefaultResponse, void>({
             query: () => ({
                 url: `/auth/login`,
@@ -35,10 +30,14 @@ export const captchaApi = createApi({
         getCaptcha: build.query<{ url: string }, void>({
             query: () => `/security/get-captcha-url`,
         }),
+        authMe: build.query<authRresponse, void>({
+            query: () => ({
+                url: `/auth/me`,
+                method: 'get'
+            })
+        }),
         login: build.mutation<DefaultResponse, LoginInputs>({
-
             query: (args) => ({
-
                 url: `/auth/login`,
                 method: 'POST',
                 body: args
@@ -51,5 +50,5 @@ export const captchaApi = createApi({
 // auto-generated based on the defined endpoints
 
 
-export const {useAuthMeQuery, useLogoutMutation} = authApi
-export const {useGetCaptchaQuery, useLoginMutation} = captchaApi
+export const { useLogoutMutation} = authApi
+export const {useGetCaptchaQuery, useLoginMutation,useAuthMeQuery} = captchaApi
