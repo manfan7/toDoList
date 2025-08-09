@@ -25,7 +25,11 @@ export const authApi = baseApi.injectEndpoints({
 })
 export const captchaApi = createApi({
     reducerPath: 'captchaApi',
-    baseQuery: fetchBaseQuery({baseUrl: 'https://social-network.samuraijs.com/api/1.0'}),
+
+    baseQuery: fetchBaseQuery({
+        baseUrl: 'https://social-network.samuraijs.com/api/1.0',
+        credentials: 'include',
+    }),
     endpoints: (build) => ({
         getCaptcha: build.query<{ url: string }, void>({
             query: () => `/security/get-captcha-url`,
@@ -51,4 +55,4 @@ export const captchaApi = createApi({
 
 
 export const { useLogoutMutation} = authApi
-export const {useGetCaptchaQuery, useLoginMutation,useAuthMeQuery} = captchaApi
+export const {useLazyGetCaptchaQuery, useLoginMutation,useAuthMeQuery} = captchaApi
