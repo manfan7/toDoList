@@ -41,13 +41,15 @@ const Err = (result.data as { resultCode: ResultCode }).resultCode
 
         switch (Err) {
             case ResultCode.Error:
+
                 const messages = (result.data as { messages: string[] }).messages
                 error = messages.length ? messages[0] : error
                 api.dispatch(errorHandler({ error }))
                 break
             case ResultCode.CaptchaError:
-                    api.dispatch(captchaTC({captcha:true}))
 
+                    api.dispatch(captchaTC({captcha:true}))
+                api.dispatch(errorHandler({ error:'captcha error' }))
                 break
             default:
                 api.dispatch(errorHandler({ error:'' }))

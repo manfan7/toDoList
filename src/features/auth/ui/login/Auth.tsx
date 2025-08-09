@@ -12,7 +12,7 @@ import {zodResolver} from "@hookform/resolvers/zod"
 import {useAppSelector} from "@/common/hooks/useAppSelector.ts"
 import {Navigate} from "react-router"
 import {Path} from "@/common/routing/Routing.tsx"
-import {errorHandler, loginTC, selectCaptcha, selectIsLoggedIn} from "@/app/app-slice.ts";
+import {captchaTC, errorHandler, loginTC, selectCaptcha, selectIsLoggedIn} from "@/app/app-slice.ts";
 import {useGetCaptchaQuery, useLoginMutation} from "@/features/auth/api/authapi.ts";
 import {ResultCode} from "@/common/enum/enum.ts";
 import {useAppDispatch} from "@/common/hooks/useAppDispatch.ts";
@@ -20,13 +20,19 @@ import {AUTH_TOKEN} from "@/common/constants";
 
 export const Login = () => {
   //const themeMode = useAppSelector(selectThemeMode)
-  //const theme = getTheme(themeMode)
+    //const theme = getTheme(themeMode)
+
 const dispatch = useAppDispatch()
   const logined = useAppSelector(selectIsLoggedIn)
-  const [login] = useLoginMutation()
- const {data} = useGetCaptchaQuery()
-
+  const [login,{data:loginData}] = useLoginMutation()
+  const {data} = useGetCaptchaQuery()
 const captcha = useAppSelector(selectCaptcha)
+
+if(loginData?.resultCode===ResultCode.CaptchaError){
+dispatch(captchaTC({captcha:true}))
+
+}
+
   const {
     register,
     handleSubmit,
@@ -34,7 +40,7 @@ const captcha = useAppSelector(selectCaptcha)
     control,
     formState: { errors },
   } = useForm<LoginInputs>({
-    defaultValues: { email: "", password: "", rememberMe: false },
+    defaultValues: { email: "", password: "", rememberMe: false,captcha: "" },
 
     resolver: zodResolver(loginSchema),
   })
@@ -43,7 +49,7 @@ try {
   const res = await login(data).unwrap()
 
   if(res?.resultCode===ResultCode.Success){
-
+    dispatch(captchaTC({captcha: false}))
     dispatch(loginTC({isLoggedIn:true}))
     dispatch(errorHandler({error:null}))
     localStorage.setItem(AUTH_TOKEN,res.data.token)
@@ -104,6 +110,7 @@ catch (errors) {
               color: "secondary",
             }} type="password" label="Password" margin="normal" {...register("password")} />
             {errors.password && <span className={styles.errorMessage}>{errors.password.message}</span>}
+            {loginData?.messages[0] && <span className={styles.errorMessage}>{loginData.messages[0]}</span>}
             <FormControlLabel
               sx={{
                 color: "white",
@@ -119,7 +126,7 @@ catch (errors) {
               }
               label={"Remeber me"}
             />
-            {!!captcha&&  <Grid container justifyContent={"center"} direction={'column'}>
+            {captcha&&  <Grid container justifyContent={"center"} direction={'column'}>
               <Grid sx={{ marginTop: 2 }}> {/* 2 = 16px */}
                 <img src={data?.url} alt="captcha" style={{ width: "100%" }} />
               </Grid>

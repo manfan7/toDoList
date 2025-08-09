@@ -119,10 +119,7 @@ export const todolistsApi = baseApi.injectEndpoints({
 
                             }
 
-                               /* const todolistIndex = state.findIndex(todolist => todolist.id === id)
-                        if (todolistIndex !== -1) {
-                            state.splice(todolistIndex, 1)
-                        }*/
+
                     })
                 )
                 try {
